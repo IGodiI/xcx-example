@@ -1614,3 +1614,4 @@ class Scratch3WeDo2Blocks {
 }
 
 module.exports = Scratch3WeDo2Blocks;
+module.exports.blockClass = Scratch3WeDo2Blocks;
