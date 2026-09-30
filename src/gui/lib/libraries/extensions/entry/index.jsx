@@ -20,13 +20,13 @@ const version = `v${packageVersion}`;
 const entry = {
     get name () {
         return formatMessage({
-            id: 'xcratchExample.entry.name',
-            defaultMessage: 'Xcratch Example',
+            id: 'wedo2hub1.entry.name',
+            defaultMessage: 'WeDo 2.0 (хаб 1)',
             description: 'name of the extension'
         });
     },
-    extensionId: 'xcratchExample',
-    extensionURL: 'https://xcratch.github.io/xcx-example/dist/xcratchExample.mjs',
+    extensionId: 'wedo2hub1',
+    extensionURL: 'https://igodii.github.io/xcx-example/dist/wedo2hub1.mjs',
     collaborator: 'xcratch',
     iconURL: iconURL,
     insetIconURL: insetIconURL,
@@ -34,13 +34,13 @@ const entry = {
         return `${formatMessage({
             defaultMessage: 'an extension for Xcratch',
             description: 'Description for this extension',
-            id: 'xcratchExample.entry.description'
+            id: 'wedo2hub1.entry.description'
         })} (${version})`;
     },
     tags: ['function', 'calculation', 'text'],
     featured: true,
     disabled: false,
-    bluetoothRequired: false,
+    bluetoothRequired: true,
     internetConnectionRequired: false,
     helpLink: 'https://xcratch.github.io/xcx-example/',
     setFormatMessage: formatter => {

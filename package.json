@@ -2,7 +2,7 @@
   "name": "xcx-example",
   "version": "1.5.0",
   "description": "example extension for Xcratch",
-  "extensionId": "xcratchExample",
+  "extensionId": "wedo2hub1",
   "scripts": {
     "setup-dev": "node ./scripts/setup-dev.mjs",
     "build": "rollup -c ./scripts/rollup.config.mjs",
@@ -35,5 +35,11 @@
     "jest": "^30.0.5",
     "rollup": "^4.46.1",
     "rollup-plugin-polyfill-node": "^0.13.0"
+  },
+  "dependencies": {
+    "atob": "^2.1.2",
+    "btoa": "^1.2.1",
+    "format-message": "^6.2.4",
+    "minilog": "^3.1.0"
   }
 }
