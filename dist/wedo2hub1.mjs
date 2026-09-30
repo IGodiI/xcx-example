@@ -7839,7 +7839,7 @@ var Scratch3WeDo2Blocks = /*#__PURE__*/function () {
      * @return {string} - the ID of this extension.
      */
     function get() {
-      return 'wedo2';
+      return 'wedo2hub1';
     }
 
     /**
