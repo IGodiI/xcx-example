@@ -68,44 +68,44 @@ var entry = {
   translationMap: translations$1
 };
 
-function _classCallCheck$1(a, n) {
+function _classCallCheck(a, n) {
   if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function");
 }
 
-function _typeof$1(o) {
+function _typeof(o) {
   "@babel/helpers - typeof";
 
-  return _typeof$1 = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) {
+  return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) {
     return typeof o;
   } : function (o) {
     return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o;
-  }, _typeof$1(o);
+  }, _typeof(o);
 }
 
-function toPrimitive$1(t, r) {
-  if ("object" != _typeof$1(t) || !t) return t;
+function toPrimitive(t, r) {
+  if ("object" != _typeof(t) || !t) return t;
   var e = t[Symbol.toPrimitive];
   if (void 0 !== e) {
     var i = e.call(t, r);
-    if ("object" != _typeof$1(i)) return i;
+    if ("object" != _typeof(i)) return i;
     throw new TypeError("@@toPrimitive must return a primitive value.");
   }
   return (String )(t);
 }
 
-function toPropertyKey$1(t) {
-  var i = toPrimitive$1(t, "string");
-  return "symbol" == _typeof$1(i) ? i : i + "";
+function toPropertyKey(t) {
+  var i = toPrimitive(t, "string");
+  return "symbol" == _typeof(i) ? i : i + "";
 }
 
-function _defineProperties$1(e, r) {
+function _defineProperties(e, r) {
   for (var t = 0; t < r.length; t++) {
     var o = r[t];
-    o.enumerable = o.enumerable || false, o.configurable = true, "value" in o && (o.writable = true), Object.defineProperty(e, toPropertyKey$1(o.key), o);
+    o.enumerable = o.enumerable || false, o.configurable = true, "value" in o && (o.writable = true), Object.defineProperty(e, toPropertyKey(o.key), o);
   }
 }
-function _createClass$1(e, r, t) {
-  return r && _defineProperties$1(e.prototype, r), t && _defineProperties$1(e, t), Object.defineProperty(e, "prototype", {
+function _createClass(e, r, t) {
+  return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", {
     writable: false
   }), e;
 }
@@ -216,48 +216,6 @@ function requireArgumentType() {
 
 var argumentTypeExports = requireArgumentType();
 var ArgumentType = /*@__PURE__*/getDefaultExportFromCjs(argumentTypeExports);
-
-function _classCallCheck(a, n) {
-  if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function");
-}
-
-function _typeof(o) {
-  "@babel/helpers - typeof";
-
-  return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) {
-    return typeof o;
-  } : function (o) {
-    return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o;
-  }, _typeof(o);
-}
-
-function toPrimitive(t, r) {
-  if ("object" != _typeof(t) || !t) return t;
-  var e = t[Symbol.toPrimitive];
-  if (void 0 !== e) {
-    var i = e.call(t, r);
-    if ("object" != _typeof(i)) return i;
-    throw new TypeError("@@toPrimitive must return a primitive value.");
-  }
-  return (String )(t);
-}
-
-function toPropertyKey(t) {
-  var i = toPrimitive(t, "string");
-  return "symbol" == _typeof(i) ? i : i + "";
-}
-
-function _defineProperties(e, r) {
-  for (var t = 0; t < r.length; t++) {
-    var o = r[t];
-    o.enumerable = o.enumerable || false, o.configurable = true, "value" in o && (o.writable = true), Object.defineProperty(e, toPropertyKey(o.key), o);
-  }
-}
-function _createClass(e, r, t) {
-  return t && _defineProperties(e, t), Object.defineProperty(e, "prototype", {
-    writable: false
-  }), e;
-}
 
 var color;
 var hasRequiredColor;
@@ -553,13 +511,6 @@ function requireCast() {
           }
           return value;
         }
-        if (typeof value === 'string') {
-          // Replace full-width numbers with half-width ones.
-          value = value.replace(/[０-９＋．ｅ]/g, function (s) {
-            return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
-          });
-          value = value.replace(/[-－﹣−‐⁃‑‒–—﹘―⎯⏤ーｰ─━]/g, '-');
-        }
         var n = Number(value);
         if (Number.isNaN(n)) {
           // Scratch treats NaN as 0, when needed as a number.
@@ -603,7 +554,7 @@ function requireCast() {
     }, {
       key: "toString",
       value: function toString(value) {
-        return String(value).replace(/\\n/g, '\n').replace(/\\t/g, '\t');
+        return String(value);
       }
 
       /**
@@ -674,8 +625,8 @@ function requireCast() {
         if (isNaN(n1) || isNaN(n2)) {
           // At least one argument can't be converted to a number.
           // Scratch compares strings as case insensitive.
-          var s1 = Cast.toString(v1).toLowerCase();
-          var s2 = Cast.toString(v2).toLowerCase();
+          var s1 = String(v1).toLowerCase();
+          var s2 = String(v2).toLowerCase();
           if (s1 < s2) {
             return -1;
           } else if (s1 > s2) {
@@ -827,7 +778,7 @@ var ExtensionBlocks = /*#__PURE__*/function () {
    * @param {Runtime} runtime - the Scratch 3.0 runtime.
    */
   function ExtensionBlocks(runtime) {
-    _classCallCheck$1(this, ExtensionBlocks);
+    _classCallCheck(this, ExtensionBlocks);
     /**
      * The Scratch 3.0 runtime.
      * @type {Runtime}
@@ -842,7 +793,7 @@ var ExtensionBlocks = /*#__PURE__*/function () {
   /**
    * @returns {object} metadata for this extension and its blocks.
    */
-  return _createClass$1(ExtensionBlocks, [{
+  return _createClass(ExtensionBlocks, [{
     key: "getInfo",
     value: function getInfo() {
       setupTranslations();
