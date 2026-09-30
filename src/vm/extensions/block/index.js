@@ -897,7 +897,7 @@ class Scratch3WeDo2Blocks {
      * @return {string} - the ID of this extension.
      */
     static get EXTENSION_ID () {
-        return 'wedo2hub1';
+        return 'wedo2hub2';
     }
 
     /**
@@ -928,9 +928,12 @@ class Scratch3WeDo2Blocks {
     getInfo () {
         return {
             id: Scratch3WeDo2Blocks.EXTENSION_ID,
-            name: 'WeDo 2.0',
+            name: 'WeDo 2.0 (хаб 2)',
             blockIconURI: iconURI,
             showStatusButton: true,
+            color1: '#0FBD8C',
+            color2: '#0DA372',
+            color3: '#0FBD8C',
             blocks: [
                 {
                     opcode: 'motorOnFor',
