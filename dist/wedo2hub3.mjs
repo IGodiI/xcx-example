@@ -7383,10 +7383,10 @@ var Scratch3WeDo2Blocks = /*#__PURE__*/function () {
           PORT: {
             acceptReporters: true,
             items: [{
-              text: 'port A',
+              text: ' port A ',
               value: WeDo2PortLabel.A
             }, {
-              text: 'port B',
+              text: ' port B ',
               value: WeDo2PortLabel.B
             }]
           },
