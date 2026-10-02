@@ -7319,7 +7319,7 @@ var Scratch3WeDo2Blocks = /*#__PURE__*/function () {
           opcode: 'getDistance',
           text: formatMessage({
             id: 'wedo2.getDistance',
-            default: 'distance [PORT]',
+            default: 'distance, port [PORT]',
             description: 'the value returned by the distance sensor'
           }),
           blockType: BlockType.REPORTER,
@@ -7383,10 +7383,10 @@ var Scratch3WeDo2Blocks = /*#__PURE__*/function () {
           PORT: {
             acceptReporters: true,
             items: [{
-              text: ' port A ',
+              text: 'A',
               value: WeDo2PortLabel.A
             }, {
-              text: ' port B ',
+              text: 'B',
               value: WeDo2PortLabel.B
             }]
           },
