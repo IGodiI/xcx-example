@@ -1110,7 +1110,7 @@ class Scratch3WeDo2Blocks {
                     opcode: 'getDistance',
                     text: formatMessage({
                         id: 'wedo2.getDistance',
-                        default: 'distance on port [PORT]',
+                        default: 'distance [PORT]',
                         description: 'the value returned by the distance sensor'
                     }),
                     blockType: BlockType.REPORTER,
@@ -1121,6 +1121,16 @@ class Scratch3WeDo2Blocks {
                             defaultValue: WeDo2PortLabel.A
                         }
                     }
+                },
+                {
+                    opcode: 'getDistanceA',
+                    text: 'distance (A)',
+                    blockType: BlockType.REPORTER
+                },
+                {
+                    opcode: 'getDistanceB',
+                    text: 'distance (B)',
+                    blockType: BlockType.REPORTER
                 },
                 {
                     opcode: 'isTilted',
@@ -1547,6 +1557,14 @@ class Scratch3WeDo2Blocks {
     getDistance (args) {
         const port = args.PORT === WeDo2PortLabel.B ? 1 : 0;
         return this._peripheral.distance(port);
+    }
+
+    getDistanceA () {
+        return this._peripheral.distance(0);
+    }
+
+    getDistanceB () {
+        return this._peripheral.distance(1);
     }
 
     /**
