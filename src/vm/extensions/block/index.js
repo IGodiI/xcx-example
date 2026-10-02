@@ -1110,7 +1110,7 @@ class Scratch3WeDo2Blocks {
                     opcode: 'getDistance',
                     text: formatMessage({
                         id: 'wedo2.getDistance',
-                        default: 'distance [PORT]',
+                        default: 'distance, port [PORT]',
                         description: 'the value returned by the distance sensor'
                     }),
                     blockType: BlockType.REPORTER,
@@ -1179,8 +1179,8 @@ class Scratch3WeDo2Blocks {
                 PORT: {
                     acceptReporters: true,
                     items: [
-                        {text: ' port A ', value: WeDo2PortLabel.A},
-                        {text: ' port B ', value: WeDo2PortLabel.B}
+                        {text: ' A ', value: WeDo2PortLabel.A},
+                        {text: ' B ', value: WeDo2PortLabel.B}
                     ]
                 },
                 MOTOR_ID: {
