@@ -1326,12 +1326,6 @@ class Scratch3WeDo2Blocks {
                 }
             }
         };
-
-        info.blocks.forEach(block => {
-            if (block.text) {
-                block.text = '3| ' + block.text;
-            }
-        });
         return info;
     }
 

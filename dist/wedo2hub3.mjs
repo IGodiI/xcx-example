@@ -7512,11 +7512,6 @@ var Scratch3WeDo2Blocks = /*#__PURE__*/function () {
           }
         }
       };
-      info.blocks.forEach(function (block) {
-        if (block.text) {
-          block.text = '3| ' + block.text;
-        }
-      });
       return info;
     }
 
