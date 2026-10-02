@@ -6258,7 +6258,7 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
  * @type {string}
  */
 // eslint-disable-next-line max-len
-var iconURI = 'data:image/png;base64,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';
+var iconURI = 'data:image/png;base64,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';
 
 /**
  * A list of WeDo 2.0 BLE service UUIDs.
@@ -6655,9 +6655,9 @@ var WeDo2 = /*#__PURE__*/function () {
      * @private
      */
     this._sensors = {
-      tiltX: 0,
-      tiltY: 0,
-      distance: 0
+      tiltX: [0, 0],
+      tiltY: [0, 0],
+      distance: [0, 0]
     };
 
     /**
@@ -6693,8 +6693,9 @@ var WeDo2 = /*#__PURE__*/function () {
    */
   return _createClass(WeDo2, [{
     key: "tiltX",
-    get: function get() {
-      return this._sensors.tiltX;
+    value: function tiltX() {
+      var port = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+      return this._sensors.tiltX[port];
     }
 
     /**
@@ -6702,8 +6703,9 @@ var WeDo2 = /*#__PURE__*/function () {
      */
   }, {
     key: "tiltY",
-    get: function get() {
-      return this._sensors.tiltY;
+    value: function tiltY() {
+      var port = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+      return this._sensors.tiltY[port];
     }
 
     /**
@@ -6711,8 +6713,9 @@ var WeDo2 = /*#__PURE__*/function () {
      */
   }, {
     key: "distance",
-    get: function get() {
-      return this._sensors.distance;
+    value: function distance() {
+      var port = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+      return this._sensors.distance[port];
     }
 
     /**
@@ -6865,9 +6868,9 @@ var WeDo2 = /*#__PURE__*/function () {
       this._ports = ['none', 'none'];
       this._motors = [null, null];
       this._sensors = {
-        tiltX: 0,
-        tiltY: 0,
-        distance: 0
+        tiltX: [0, 0],
+        tiltY: [0, 0],
+        distance: [0, 0]
       };
       if (this._batteryLevelIntervalId) {
         window.clearInterval(this._batteryLevelIntervalId);
@@ -7012,11 +7015,11 @@ var WeDo2 = /*#__PURE__*/function () {
             var _connectID = data[1];
             var type = this._ports[_connectID - 1];
             if (type === WeDo2Device.DISTANCE) {
-              this._sensors.distance = data[2];
+              this._sensors.distance[_connectID - 1] = data[2];
             }
             if (type === WeDo2Device.TILT) {
-              this._sensors.tiltX = data[2];
-              this._sensors.tiltY = data[3];
+              this._sensors.tiltX[_connectID - 1] = data[2];
+              this._sensors.tiltY[_connectID - 1] = data[3];
             }
             break;
           }
@@ -7070,10 +7073,11 @@ var WeDo2 = /*#__PURE__*/function () {
     value: function _clearPort(connectID) {
       var type = this._ports[connectID - 1];
       if (type === WeDo2Device.TILT) {
-        this._sensors.tiltX = this._sensors.tiltY = 0;
+        this._sensors.tiltX[connectID - 1] = 0;
+        this._sensors.tiltY[connectID - 1] = 0;
       }
       if (type === WeDo2Device.DISTANCE) {
-        this._sensors.distance = 0;
+        this._sensors.distance[connectID - 1] = 0;
       }
       this._ports[connectID - 1] = 'none';
       this._motors[connectID - 1] = null;
@@ -7090,6 +7094,10 @@ var WeDo2MotorLabel = {
   A: 'motor A',
   B: 'motor B',
   ALL: 'all motors'
+};
+var WeDo2PortLabel = {
+  A: 'A',
+  B: 'B'
 };
 
 /**
@@ -7142,7 +7150,7 @@ var Scratch3WeDo2Blocks = /*#__PURE__*/function () {
   return _createClass(Scratch3WeDo2Blocks, [{
     key: "getInfo",
     value: function getInfo() {
-      return {
+      var info = {
         id: Scratch3WeDo2Blocks.EXTENSION_ID,
         name: 'WeDo 2.0 (хаб 2)',
         blockIconURI: iconURI,
@@ -7311,15 +7319,30 @@ var Scratch3WeDo2Blocks = /*#__PURE__*/function () {
           opcode: 'getDistance',
           text: formatMessage({
             id: 'wedo2.getDistance',
-            default: 'distance',
+            default: 'distance, port [PORT]',
             description: 'the value returned by the distance sensor'
           }),
+          blockType: BlockType.REPORTER,
+          arguments: {
+            PORT: {
+              type: ArgumentType.STRING,
+              menu: 'PORT',
+              defaultValue: WeDo2PortLabel.A
+            }
+          }
+        }, {
+          opcode: 'getDistanceA',
+          text: 'distance (A)',
+          blockType: BlockType.REPORTER
+        }, {
+          opcode: 'getDistanceB',
+          text: 'distance (B)',
           blockType: BlockType.REPORTER
         }, {
           opcode: 'isTilted',
           text: formatMessage({
             id: 'wedo2.isTilted',
-            default: 'tilted [TILT_DIRECTION_ANY]?',
+            default: 'tilted [TILT_DIRECTION_ANY] on port [PORT]?',
             description: 'whether the tilt sensor is tilted'
           }),
           blockType: BlockType.BOOLEAN,
@@ -7328,13 +7351,18 @@ var Scratch3WeDo2Blocks = /*#__PURE__*/function () {
               type: ArgumentType.STRING,
               menu: 'TILT_DIRECTION_ANY',
               defaultValue: WeDo2TiltDirection.ANY
+            },
+            PORT: {
+              type: ArgumentType.STRING,
+              menu: 'PORT',
+              defaultValue: WeDo2PortLabel.A
             }
           }
         }, {
           opcode: 'getTiltAngle',
           text: formatMessage({
             id: 'wedo2.getTiltAngle',
-            default: 'tilt angle [TILT_DIRECTION]',
+            default: 'tilt angle [TILT_DIRECTION] on port [PORT]',
             description: 'the angle returned by the tilt sensor'
           }),
           blockType: BlockType.REPORTER,
@@ -7343,10 +7371,25 @@ var Scratch3WeDo2Blocks = /*#__PURE__*/function () {
               type: ArgumentType.STRING,
               menu: 'TILT_DIRECTION',
               defaultValue: WeDo2TiltDirection.UP
+            },
+            PORT: {
+              type: ArgumentType.STRING,
+              menu: 'PORT',
+              defaultValue: WeDo2PortLabel.A
             }
           }
         }],
         menus: {
+          PORT: {
+            acceptReporters: true,
+            items: [{
+              text: 'A',
+              value: WeDo2PortLabel.A
+            }, {
+              text: 'B',
+              value: WeDo2PortLabel.B
+            }]
+          },
           MOTOR_ID: {
             acceptReporters: true,
             items: [{
@@ -7477,6 +7520,7 @@ var Scratch3WeDo2Blocks = /*#__PURE__*/function () {
           }
         }
       };
+      return info;
     }
 
     /**
@@ -7716,8 +7760,19 @@ var Scratch3WeDo2Blocks = /*#__PURE__*/function () {
      */
   }, {
     key: "getDistance",
-    value: function getDistance() {
-      return this._peripheral.distance;
+    value: function getDistance(args) {
+      var port = args.PORT === WeDo2PortLabel.B ? 1 : 0;
+      return this._peripheral.distance(port);
+    }
+  }, {
+    key: "getDistanceA",
+    value: function getDistanceA() {
+      return this._peripheral.distance(0);
+    }
+  }, {
+    key: "getDistanceB",
+    value: function getDistanceB() {
+      return this._peripheral.distance(1);
     }
 
     /**
@@ -7729,7 +7784,8 @@ var Scratch3WeDo2Blocks = /*#__PURE__*/function () {
   }, {
     key: "isTilted",
     value: function isTilted(args) {
-      return this._isTilted(args.TILT_DIRECTION_ANY);
+      var port = args.PORT === WeDo2PortLabel.B ? 1 : 0;
+      return this._isTilted(args.TILT_DIRECTION_ANY, port);
     }
 
     /**
@@ -7741,7 +7797,8 @@ var Scratch3WeDo2Blocks = /*#__PURE__*/function () {
   }, {
     key: "getTiltAngle",
     value: function getTiltAngle(args) {
-      return this._getTiltAngle(args.TILT_DIRECTION);
+      var port = args.PORT === WeDo2PortLabel.B ? 1 : 0;
+      return this._getTiltAngle(args.TILT_DIRECTION, port);
     }
 
     /**
@@ -7753,11 +7810,12 @@ var Scratch3WeDo2Blocks = /*#__PURE__*/function () {
   }, {
     key: "_isTilted",
     value: function _isTilted(direction) {
+      var port = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
       switch (direction) {
         case WeDo2TiltDirection.ANY:
-          return this._getTiltAngle(WeDo2TiltDirection.UP) >= Scratch3WeDo2Blocks.TILT_THRESHOLD || this._getTiltAngle(WeDo2TiltDirection.DOWN) >= Scratch3WeDo2Blocks.TILT_THRESHOLD || this._getTiltAngle(WeDo2TiltDirection.LEFT) >= Scratch3WeDo2Blocks.TILT_THRESHOLD || this._getTiltAngle(WeDo2TiltDirection.RIGHT) >= Scratch3WeDo2Blocks.TILT_THRESHOLD;
+          return this._getTiltAngle(WeDo2TiltDirection.UP, port) >= Scratch3WeDo2Blocks.TILT_THRESHOLD || this._getTiltAngle(WeDo2TiltDirection.DOWN, port) >= Scratch3WeDo2Blocks.TILT_THRESHOLD || this._getTiltAngle(WeDo2TiltDirection.LEFT, port) >= Scratch3WeDo2Blocks.TILT_THRESHOLD || this._getTiltAngle(WeDo2TiltDirection.RIGHT, port) >= Scratch3WeDo2Blocks.TILT_THRESHOLD;
         default:
-          return this._getTiltAngle(direction) >= Scratch3WeDo2Blocks.TILT_THRESHOLD;
+          return this._getTiltAngle(direction, port) >= Scratch3WeDo2Blocks.TILT_THRESHOLD;
       }
     }
 
@@ -7770,15 +7828,18 @@ var Scratch3WeDo2Blocks = /*#__PURE__*/function () {
   }, {
     key: "_getTiltAngle",
     value: function _getTiltAngle(direction) {
+      var port = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+      var tiltY = this._peripheral.tiltY(port);
+      var tiltX = this._peripheral.tiltX(port);
       switch (direction) {
         case WeDo2TiltDirection.UP:
-          return this._peripheral.tiltY > 45 ? 256 - this._peripheral.tiltY : -this._peripheral.tiltY;
+          return tiltY > 45 ? 256 - tiltY : -tiltY;
         case WeDo2TiltDirection.DOWN:
-          return this._peripheral.tiltY > 45 ? this._peripheral.tiltY - 256 : this._peripheral.tiltY;
+          return tiltY > 45 ? tiltY - 256 : tiltY;
         case WeDo2TiltDirection.LEFT:
-          return this._peripheral.tiltX > 45 ? 256 - this._peripheral.tiltX : -this._peripheral.tiltX;
+          return tiltX > 45 ? 256 - tiltX : -tiltX;
         case WeDo2TiltDirection.RIGHT:
-          return this._peripheral.tiltX > 45 ? this._peripheral.tiltX - 256 : this._peripheral.tiltX;
+          return tiltX > 45 ? tiltX - 256 : tiltX;
         default:
           log.warn("Unknown tilt direction in _getTiltAngle: ".concat(direction));
       }
