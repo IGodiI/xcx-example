@@ -406,9 +406,9 @@ class WeDo2 {
          * @private
          */
         this._sensors = {
-            tiltX: 0,
-            tiltY: 0,
-            distance: 0
+            tiltX: [0, 0],
+            tiltY: [0, 0],
+            distance: [0, 0]
         };
 
         /**
@@ -443,22 +443,22 @@ class WeDo2 {
     /**
      * @return {number} - the latest value received for the tilt sensor's tilt about the X axis.
      */
-    get tiltX () {
-        return this._sensors.tiltX;
+    tiltX (port = 0) {
+        return this._sensors.tiltX[port];
     }
 
     /**
      * @return {number} - the latest value received for the tilt sensor's tilt about the Y axis.
      */
-    get tiltY () {
-        return this._sensors.tiltY;
+    tiltY (port = 0) {
+        return this._sensors.tiltY[port];
     }
 
     /**
      * @return {number} - the latest value received from the distance sensor.
      */
-    get distance () {
-        return this._sensors.distance;
+    distance (port = 0) {
+        return this._sensors.distance[port];
     }
 
     /**
@@ -624,9 +624,9 @@ class WeDo2 {
         this._ports = ['none', 'none'];
         this._motors = [null, null];
         this._sensors = {
-            tiltX: 0,
-            tiltY: 0,
-            distance: 0
+            tiltX: [0, 0],
+            tiltY: [0, 0],
+            distance: [0, 0]
         };
 
         if (this._batteryLevelIntervalId) {
@@ -774,11 +774,11 @@ class WeDo2 {
             const connectID = data[1];
             const type = this._ports[connectID - 1];
             if (type === WeDo2Device.DISTANCE) {
-                this._sensors.distance = data[2];
+                this._sensors.distance[connectID - 1] = data[2];
             }
             if (type === WeDo2Device.TILT) {
-                this._sensors.tiltX = data[2];
-                this._sensors.tiltY = data[3];
+                this._sensors.tiltX[connectID - 1] = data[2];
+                this._sensors.tiltY[connectID - 1] = data[3];
             }
             break;
         }
@@ -842,10 +842,11 @@ class WeDo2 {
     _clearPort (connectID) {
         const type = this._ports[connectID - 1];
         if (type === WeDo2Device.TILT) {
-            this._sensors.tiltX = this._sensors.tiltY = 0;
+            this._sensors.tiltX[connectID - 1] = 0;
+            this._sensors.tiltY[connectID - 1] = 0;
         }
         if (type === WeDo2Device.DISTANCE) {
-            this._sensors.distance = 0;
+            this._sensors.distance[connectID - 1] = 0;
         }
         this._ports[connectID - 1] = 'none';
         this._motors[connectID - 1] = null;
@@ -862,6 +863,11 @@ const WeDo2MotorLabel = {
     A: 'motor A',
     B: 'motor B',
     ALL: 'all motors'
+};
+
+const WeDo2PortLabel = {
+    A: 'A',
+    B: 'B'
 };
 
 /**
@@ -926,7 +932,7 @@ class Scratch3WeDo2Blocks {
      * @returns {object} metadata for this extension and its blocks.
      */
     getInfo () {
-        return {
+        const info = {
             id: Scratch3WeDo2Blocks.EXTENSION_ID,
             name: 'WeDo 2.0 (хаб 3)',
             blockIconURI: iconURI,
@@ -1104,16 +1110,23 @@ class Scratch3WeDo2Blocks {
                     opcode: 'getDistance',
                     text: formatMessage({
                         id: 'wedo2.getDistance',
-                        default: 'distance',
+                        default: 'distance on port [PORT]',
                         description: 'the value returned by the distance sensor'
                     }),
-                    blockType: BlockType.REPORTER
+                    blockType: BlockType.REPORTER,
+                    arguments: {
+                        PORT: {
+                            type: ArgumentType.STRING,
+                            menu: 'PORT',
+                            defaultValue: WeDo2PortLabel.A
+                        }
+                    }
                 },
                 {
                     opcode: 'isTilted',
                     text: formatMessage({
                         id: 'wedo2.isTilted',
-                        default: 'tilted [TILT_DIRECTION_ANY]?',
+                        default: 'tilted [TILT_DIRECTION_ANY] on port [PORT]?',
                         description: 'whether the tilt sensor is tilted'
                     }),
                     blockType: BlockType.BOOLEAN,
@@ -1122,6 +1135,11 @@ class Scratch3WeDo2Blocks {
                             type: ArgumentType.STRING,
                             menu: 'TILT_DIRECTION_ANY',
                             defaultValue: WeDo2TiltDirection.ANY
+                        },
+                        PORT: {
+                            type: ArgumentType.STRING,
+                            menu: 'PORT',
+                            defaultValue: WeDo2PortLabel.A
                         }
                     }
                 },
@@ -1129,7 +1147,7 @@ class Scratch3WeDo2Blocks {
                     opcode: 'getTiltAngle',
                     text: formatMessage({
                         id: 'wedo2.getTiltAngle',
-                        default: 'tilt angle [TILT_DIRECTION]',
+                        default: 'tilt angle [TILT_DIRECTION] on port [PORT]',
                         description: 'the angle returned by the tilt sensor'
                     }),
                     blockType: BlockType.REPORTER,
@@ -1138,11 +1156,23 @@ class Scratch3WeDo2Blocks {
                             type: ArgumentType.STRING,
                             menu: 'TILT_DIRECTION',
                             defaultValue: WeDo2TiltDirection.UP
+                        },
+                        PORT: {
+                            type: ArgumentType.STRING,
+                            menu: 'PORT',
+                            defaultValue: WeDo2PortLabel.A
                         }
                     }
                 }
             ],
             menus: {
+                PORT: {
+                    acceptReporters: true,
+                    items: [
+                        {text: 'port A', value: WeDo2PortLabel.A},
+                        {text: 'port B', value: WeDo2PortLabel.B}
+                    ]
+                },
                 MOTOR_ID: {
                     acceptReporters: true,
                     items: [
@@ -1296,6 +1326,13 @@ class Scratch3WeDo2Blocks {
                 }
             }
         };
+
+        info.blocks.forEach(block => {
+            if (block.text) {
+                block.text = '3| ' + block.text;
+            }
+        });
+        return info;
     }
 
     /**
@@ -1513,8 +1550,9 @@ class Scratch3WeDo2Blocks {
     /**
      * @return {number} - the distance sensor's value, scaled to the [0,100] range.
      */
-    getDistance () {
-        return this._peripheral.distance;
+    getDistance (args) {
+        const port = args.PORT === WeDo2PortLabel.B ? 1 : 0;
+        return this._peripheral.distance(port);
     }
 
     /**
@@ -1524,7 +1562,8 @@ class Scratch3WeDo2Blocks {
      * @return {boolean} - true if the tilt sensor is tilted past a threshold in the specified direction.
      */
     isTilted (args) {
-        return this._isTilted(args.TILT_DIRECTION_ANY);
+        const port = args.PORT === WeDo2PortLabel.B ? 1 : 0;
+        return this._isTilted(args.TILT_DIRECTION_ANY, port);
     }
 
     /**
@@ -1534,7 +1573,8 @@ class Scratch3WeDo2Blocks {
      * Note that getTiltAngle(up) = -getTiltAngle(down) and getTiltAngle(left) = -getTiltAngle(right).
      */
     getTiltAngle (args) {
-        return this._getTiltAngle(args.TILT_DIRECTION);
+        const port = args.PORT === WeDo2PortLabel.B ? 1 : 0;
+        return this._getTiltAngle(args.TILT_DIRECTION, port);
     }
 
     /**
@@ -1543,15 +1583,15 @@ class Scratch3WeDo2Blocks {
      * @return {boolean} - true if the tilt sensor is tilted past a threshold in the specified direction.
      * @private
      */
-    _isTilted (direction) {
+    _isTilted (direction, port = 0) {
         switch (direction) {
         case WeDo2TiltDirection.ANY:
-            return this._getTiltAngle(WeDo2TiltDirection.UP) >= Scratch3WeDo2Blocks.TILT_THRESHOLD ||
-                this._getTiltAngle(WeDo2TiltDirection.DOWN) >= Scratch3WeDo2Blocks.TILT_THRESHOLD ||
-                this._getTiltAngle(WeDo2TiltDirection.LEFT) >= Scratch3WeDo2Blocks.TILT_THRESHOLD ||
-                this._getTiltAngle(WeDo2TiltDirection.RIGHT) >= Scratch3WeDo2Blocks.TILT_THRESHOLD;
+            return this._getTiltAngle(WeDo2TiltDirection.UP, port) >= Scratch3WeDo2Blocks.TILT_THRESHOLD ||
+                this._getTiltAngle(WeDo2TiltDirection.DOWN, port) >= Scratch3WeDo2Blocks.TILT_THRESHOLD ||
+                this._getTiltAngle(WeDo2TiltDirection.LEFT, port) >= Scratch3WeDo2Blocks.TILT_THRESHOLD ||
+                this._getTiltAngle(WeDo2TiltDirection.RIGHT, port) >= Scratch3WeDo2Blocks.TILT_THRESHOLD;
         default:
-            return this._getTiltAngle(direction) >= Scratch3WeDo2Blocks.TILT_THRESHOLD;
+            return this._getTiltAngle(direction, port) >= Scratch3WeDo2Blocks.TILT_THRESHOLD;
         }
     }
 
@@ -1561,16 +1601,18 @@ class Scratch3WeDo2Blocks {
      * Note that getTiltAngle(up) = -getTiltAngle(down) and getTiltAngle(left) = -getTiltAngle(right).
      * @private
      */
-    _getTiltAngle (direction) {
+    _getTiltAngle (direction, port = 0) {
+        const tiltY = this._peripheral.tiltY(port);
+        const tiltX = this._peripheral.tiltX(port);
         switch (direction) {
         case WeDo2TiltDirection.UP:
-            return this._peripheral.tiltY > 45 ? 256 - this._peripheral.tiltY : -this._peripheral.tiltY;
+            return tiltY > 45 ? 256 - tiltY : -tiltY;
         case WeDo2TiltDirection.DOWN:
-            return this._peripheral.tiltY > 45 ? this._peripheral.tiltY - 256 : this._peripheral.tiltY;
+            return tiltY > 45 ? tiltY - 256 : tiltY;
         case WeDo2TiltDirection.LEFT:
-            return this._peripheral.tiltX > 45 ? 256 - this._peripheral.tiltX : -this._peripheral.tiltX;
+            return tiltX > 45 ? 256 - tiltX : -tiltX;
         case WeDo2TiltDirection.RIGHT:
-            return this._peripheral.tiltX > 45 ? this._peripheral.tiltX - 256 : this._peripheral.tiltX;
+            return tiltX > 45 ? tiltX - 256 : tiltX;
         default:
             log.warn(`Unknown tilt direction in _getTiltAngle: ${direction}`);
         }

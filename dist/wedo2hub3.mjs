@@ -6655,9 +6655,9 @@ var WeDo2 = /*#__PURE__*/function () {
      * @private
      */
     this._sensors = {
-      tiltX: 0,
-      tiltY: 0,
-      distance: 0
+      tiltX: [0, 0],
+      tiltY: [0, 0],
+      distance: [0, 0]
     };
 
     /**
@@ -6693,8 +6693,9 @@ var WeDo2 = /*#__PURE__*/function () {
    */
   return _createClass(WeDo2, [{
     key: "tiltX",
-    get: function get() {
-      return this._sensors.tiltX;
+    value: function tiltX() {
+      var port = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+      return this._sensors.tiltX[port];
     }
 
     /**
@@ -6702,8 +6703,9 @@ var WeDo2 = /*#__PURE__*/function () {
      */
   }, {
     key: "tiltY",
-    get: function get() {
-      return this._sensors.tiltY;
+    value: function tiltY() {
+      var port = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+      return this._sensors.tiltY[port];
     }
 
     /**
@@ -6711,8 +6713,9 @@ var WeDo2 = /*#__PURE__*/function () {
      */
   }, {
     key: "distance",
-    get: function get() {
-      return this._sensors.distance;
+    value: function distance() {
+      var port = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+      return this._sensors.distance[port];
     }
 
     /**
@@ -6865,9 +6868,9 @@ var WeDo2 = /*#__PURE__*/function () {
       this._ports = ['none', 'none'];
       this._motors = [null, null];
       this._sensors = {
-        tiltX: 0,
-        tiltY: 0,
-        distance: 0
+        tiltX: [0, 0],
+        tiltY: [0, 0],
+        distance: [0, 0]
       };
       if (this._batteryLevelIntervalId) {
         window.clearInterval(this._batteryLevelIntervalId);
@@ -7012,11 +7015,11 @@ var WeDo2 = /*#__PURE__*/function () {
             var _connectID = data[1];
             var type = this._ports[_connectID - 1];
             if (type === WeDo2Device.DISTANCE) {
-              this._sensors.distance = data[2];
+              this._sensors.distance[_connectID - 1] = data[2];
             }
             if (type === WeDo2Device.TILT) {
-              this._sensors.tiltX = data[2];
-              this._sensors.tiltY = data[3];
+              this._sensors.tiltX[_connectID - 1] = data[2];
+              this._sensors.tiltY[_connectID - 1] = data[3];
             }
             break;
           }
@@ -7070,10 +7073,11 @@ var WeDo2 = /*#__PURE__*/function () {
     value: function _clearPort(connectID) {
       var type = this._ports[connectID - 1];
       if (type === WeDo2Device.TILT) {
-        this._sensors.tiltX = this._sensors.tiltY = 0;
+        this._sensors.tiltX[connectID - 1] = 0;
+        this._sensors.tiltY[connectID - 1] = 0;
       }
       if (type === WeDo2Device.DISTANCE) {
-        this._sensors.distance = 0;
+        this._sensors.distance[connectID - 1] = 0;
       }
       this._ports[connectID - 1] = 'none';
       this._motors[connectID - 1] = null;
@@ -7090,6 +7094,10 @@ var WeDo2MotorLabel = {
   A: 'motor A',
   B: 'motor B',
   ALL: 'all motors'
+};
+var WeDo2PortLabel = {
+  A: 'A',
+  B: 'B'
 };
 
 /**
@@ -7142,7 +7150,7 @@ var Scratch3WeDo2Blocks = /*#__PURE__*/function () {
   return _createClass(Scratch3WeDo2Blocks, [{
     key: "getInfo",
     value: function getInfo() {
-      return {
+      var info = {
         id: Scratch3WeDo2Blocks.EXTENSION_ID,
         name: 'WeDo 2.0 (хаб 3)',
         blockIconURI: iconURI,
@@ -7311,15 +7319,22 @@ var Scratch3WeDo2Blocks = /*#__PURE__*/function () {
           opcode: 'getDistance',
           text: formatMessage({
             id: 'wedo2.getDistance',
-            default: 'distance',
+            default: 'distance on port [PORT]',
             description: 'the value returned by the distance sensor'
           }),
-          blockType: BlockType.REPORTER
+          blockType: BlockType.REPORTER,
+          arguments: {
+            PORT: {
+              type: ArgumentType.STRING,
+              menu: 'PORT',
+              defaultValue: WeDo2PortLabel.A
+            }
+          }
         }, {
           opcode: 'isTilted',
           text: formatMessage({
             id: 'wedo2.isTilted',
-            default: 'tilted [TILT_DIRECTION_ANY]?',
+            default: 'tilted [TILT_DIRECTION_ANY] on port [PORT]?',
             description: 'whether the tilt sensor is tilted'
           }),
           blockType: BlockType.BOOLEAN,
@@ -7328,13 +7343,18 @@ var Scratch3WeDo2Blocks = /*#__PURE__*/function () {
               type: ArgumentType.STRING,
               menu: 'TILT_DIRECTION_ANY',
               defaultValue: WeDo2TiltDirection.ANY
+            },
+            PORT: {
+              type: ArgumentType.STRING,
+              menu: 'PORT',
+              defaultValue: WeDo2PortLabel.A
             }
           }
         }, {
           opcode: 'getTiltAngle',
           text: formatMessage({
             id: 'wedo2.getTiltAngle',
-            default: 'tilt angle [TILT_DIRECTION]',
+            default: 'tilt angle [TILT_DIRECTION] on port [PORT]',
             description: 'the angle returned by the tilt sensor'
           }),
           blockType: BlockType.REPORTER,
@@ -7343,10 +7363,25 @@ var Scratch3WeDo2Blocks = /*#__PURE__*/function () {
               type: ArgumentType.STRING,
               menu: 'TILT_DIRECTION',
               defaultValue: WeDo2TiltDirection.UP
+            },
+            PORT: {
+              type: ArgumentType.STRING,
+              menu: 'PORT',
+              defaultValue: WeDo2PortLabel.A
             }
           }
         }],
         menus: {
+          PORT: {
+            acceptReporters: true,
+            items: [{
+              text: 'port A',
+              value: WeDo2PortLabel.A
+            }, {
+              text: 'port B',
+              value: WeDo2PortLabel.B
+            }]
+          },
           MOTOR_ID: {
             acceptReporters: true,
             items: [{
@@ -7477,6 +7512,12 @@ var Scratch3WeDo2Blocks = /*#__PURE__*/function () {
           }
         }
       };
+      info.blocks.forEach(function (block) {
+        if (block.text) {
+          block.text = '3| ' + block.text;
+        }
+      });
+      return info;
     }
 
     /**
@@ -7716,8 +7757,9 @@ var Scratch3WeDo2Blocks = /*#__PURE__*/function () {
      */
   }, {
     key: "getDistance",
-    value: function getDistance() {
-      return this._peripheral.distance;
+    value: function getDistance(args) {
+      var port = args.PORT === WeDo2PortLabel.B ? 1 : 0;
+      return this._peripheral.distance(port);
     }
 
     /**
@@ -7729,7 +7771,8 @@ var Scratch3WeDo2Blocks = /*#__PURE__*/function () {
   }, {
     key: "isTilted",
     value: function isTilted(args) {
-      return this._isTilted(args.TILT_DIRECTION_ANY);
+      var port = args.PORT === WeDo2PortLabel.B ? 1 : 0;
+      return this._isTilted(args.TILT_DIRECTION_ANY, port);
     }
 
     /**
@@ -7741,7 +7784,8 @@ var Scratch3WeDo2Blocks = /*#__PURE__*/function () {
   }, {
     key: "getTiltAngle",
     value: function getTiltAngle(args) {
-      return this._getTiltAngle(args.TILT_DIRECTION);
+      var port = args.PORT === WeDo2PortLabel.B ? 1 : 0;
+      return this._getTiltAngle(args.TILT_DIRECTION, port);
     }
 
     /**
@@ -7753,11 +7797,12 @@ var Scratch3WeDo2Blocks = /*#__PURE__*/function () {
   }, {
     key: "_isTilted",
     value: function _isTilted(direction) {
+      var port = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
       switch (direction) {
         case WeDo2TiltDirection.ANY:
-          return this._getTiltAngle(WeDo2TiltDirection.UP) >= Scratch3WeDo2Blocks.TILT_THRESHOLD || this._getTiltAngle(WeDo2TiltDirection.DOWN) >= Scratch3WeDo2Blocks.TILT_THRESHOLD || this._getTiltAngle(WeDo2TiltDirection.LEFT) >= Scratch3WeDo2Blocks.TILT_THRESHOLD || this._getTiltAngle(WeDo2TiltDirection.RIGHT) >= Scratch3WeDo2Blocks.TILT_THRESHOLD;
+          return this._getTiltAngle(WeDo2TiltDirection.UP, port) >= Scratch3WeDo2Blocks.TILT_THRESHOLD || this._getTiltAngle(WeDo2TiltDirection.DOWN, port) >= Scratch3WeDo2Blocks.TILT_THRESHOLD || this._getTiltAngle(WeDo2TiltDirection.LEFT, port) >= Scratch3WeDo2Blocks.TILT_THRESHOLD || this._getTiltAngle(WeDo2TiltDirection.RIGHT, port) >= Scratch3WeDo2Blocks.TILT_THRESHOLD;
         default:
-          return this._getTiltAngle(direction) >= Scratch3WeDo2Blocks.TILT_THRESHOLD;
+          return this._getTiltAngle(direction, port) >= Scratch3WeDo2Blocks.TILT_THRESHOLD;
       }
     }
 
@@ -7770,15 +7815,18 @@ var Scratch3WeDo2Blocks = /*#__PURE__*/function () {
   }, {
     key: "_getTiltAngle",
     value: function _getTiltAngle(direction) {
+      var port = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+      var tiltY = this._peripheral.tiltY(port);
+      var tiltX = this._peripheral.tiltX(port);
       switch (direction) {
         case WeDo2TiltDirection.UP:
-          return this._peripheral.tiltY > 45 ? 256 - this._peripheral.tiltY : -this._peripheral.tiltY;
+          return tiltY > 45 ? 256 - tiltY : -tiltY;
         case WeDo2TiltDirection.DOWN:
-          return this._peripheral.tiltY > 45 ? this._peripheral.tiltY - 256 : this._peripheral.tiltY;
+          return tiltY > 45 ? tiltY - 256 : tiltY;
         case WeDo2TiltDirection.LEFT:
-          return this._peripheral.tiltX > 45 ? 256 - this._peripheral.tiltX : -this._peripheral.tiltX;
+          return tiltX > 45 ? 256 - tiltX : -tiltX;
         case WeDo2TiltDirection.RIGHT:
-          return this._peripheral.tiltX > 45 ? this._peripheral.tiltX - 256 : this._peripheral.tiltX;
+          return tiltX > 45 ? tiltX - 256 : tiltX;
         default:
           log.warn("Unknown tilt direction in _getTiltAngle: ".concat(direction));
       }
