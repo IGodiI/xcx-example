@@ -5055,6 +5055,15 @@ var WeDo2 = /*#__PURE__*/function () {
      * @private
      */
     this._batteryLevelIntervalId = null;
+
+    /**
+     * Queue for configuration (Input Command) writes, so they go one at a time.
+     * @type {Promise}
+     * @private
+     */
+    this._configQueue = Promise.resolve();
+    this._ledModeTime = 0;
+    this._dbgCount = 0;
     this.reset = this.reset.bind(this);
     this._onConnect = this._onConnect.bind(this);
     this._onMessage = this._onMessage.bind(this);
@@ -5126,9 +5135,21 @@ var WeDo2 = /*#__PURE__*/function () {
   }, {
     key: "setLED",
     value: function setLED(inputRGB) {
+      var _this2 = this;
       var rgb = [inputRGB >> 16 & 0x000000FF, inputRGB >> 8 & 0x000000FF, inputRGB & 0x000000FF];
       var cmd = this.generateOutputCommand(WeDo2ConnectID.LED, WeDo2Command.WRITE_RGB, rgb);
-      return this.send(BLECharacteristic.OUTPUT_COMMAND, cmd);
+
+      // Re-send the LED mode from time to time: some hubs lose or ignore it.
+      var now = Date.now();
+      if (!this._ledModeTime || now - this._ledModeTime > 3000) {
+        this._ledModeTime = now;
+        this.setLEDMode();
+      }
+
+      // Wait until pending configuration writes are done, then set the color.
+      return this._configQueue.then(function () {
+        return _this2.send(BLECharacteristic.OUTPUT_COMMAND, cmd);
+      });
     }
 
     /**
@@ -5238,6 +5259,7 @@ var WeDo2 = /*#__PURE__*/function () {
   }, {
     key: "reset",
     value: function reset() {
+      this._ledModeTime = 0;
       this._ports = ['none', 'none'];
       this._motors = [null, null];
       this._sensors = {
@@ -5275,12 +5297,37 @@ var WeDo2 = /*#__PURE__*/function () {
   }, {
     key: "send",
     value: function send(uuid, message) {
+      var _this3 = this;
       var useLimiter = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
       if (!this.isConnected()) return Promise.resolve();
       if (useLimiter) {
         if (!this._rateLimiter.okayToSend()) return Promise.resolve();
       }
-      return this._ble.write(BLEService.IO_SERVICE, uuid, Base64Util.uint8ArrayToBase64(message), 'base64');
+      var b64 = Base64Util.uint8ArrayToBase64(message);
+      var doWrite = function doWrite(withResponse) {
+        return _this3._ble.write(BLEService.IO_SERVICE, uuid, b64, 'base64', withResponse);
+      };
+      if (uuid === BLECharacteristic.INPUT_COMMAND) {
+        // Configuration commands: one at a time, WITH response, small gap between them.
+        var p = this._configQueue.then(function () {
+          if (!_this3.isConnected()) return null;
+          return doWrite(true).catch(function (e) {
+            console.warn('[wedo2hub3] write with response failed, retry without', e);
+            return doWrite(false);
+          });
+        }).catch(function (e) {
+          console.warn('[wedo2hub3] input command failed', e);
+        }).then(function () {
+          return new Promise(function (resolve) {
+            return setTimeout(resolve, 100);
+          });
+        });
+        this._configQueue = p;
+        return p;
+      }
+      return doWrite(null).catch(function (e) {
+        console.warn('[wedo2hub3] output write failed', e);
+      });
     }
 
     /**
@@ -5345,9 +5392,20 @@ var WeDo2 = /*#__PURE__*/function () {
   }, {
     key: "_onConnect",
     value: function _onConnect() {
-      this.setLEDMode();
-      this.setLED(0x0000FF);
-      this._ble.startNotifications(BLEService.DEVICE_SERVICE, BLECharacteristic.ATTACHED_IO, this._onMessage);
+      var _this4 = this;
+      console.log('[wedo2hub3] connected, init sequence v1.5.1');
+      this._ledModeTime = 0;
+      this._dbgCount = 0;
+      // Subscribe first, then configure the LED after a short pause.
+      this._ble.startNotifications(BLEService.DEVICE_SERVICE, BLECharacteristic.ATTACHED_IO, this._onMessage).catch(function (e) {
+        console.warn('[wedo2hub3] subscribe to ATTACHED_IO failed', e);
+      }).then(function () {
+        return new Promise(function (resolve) {
+          return setTimeout(resolve, 300);
+        });
+      }).then(function () {
+        _this4.setLED(0x0000FF);
+      });
       this._batteryLevelIntervalId = window.setInterval(this._checkBatteryLevel, BLEBatteryCheckInterval);
     }
 
@@ -5360,7 +5418,10 @@ var WeDo2 = /*#__PURE__*/function () {
     key: "_onMessage",
     value: function _onMessage(base64) {
       var data = Base64Util.base64ToUint8Array(base64);
-      // log.info(data);
+      // Debug: log port attach/detach messages and the first few sensor values
+      if (data[0] === 1 || data[0] === 2 || data[0] === 5 || data[0] === 6 || this._dbgCount++ < 5) {
+        console.log('[wedo2hub3] msg', Array.prototype.slice.call(data));
+      }
 
       /**
        * If first byte of data is '1' or '2', then either clear the
@@ -5407,7 +5468,11 @@ var WeDo2 = /*#__PURE__*/function () {
   }, {
     key: "_checkBatteryLevel",
     value: function _checkBatteryLevel() {
-      this._ble.read(BLEService.DEVICE_SERVICE, BLECharacteristic.LOW_VOLTAGE_ALERT, false);
+      var _this5 = this;
+      // Wait for pending configuration writes so BLE operations do not collide.
+      this._configQueue.then(function () {
+        return _this5._ble.read(BLEService.DEVICE_SERVICE, BLECharacteristic.LOW_VOLTAGE_ALERT, false);
+      }).catch(function () {});
     }
 
     /**
@@ -5421,6 +5486,7 @@ var WeDo2 = /*#__PURE__*/function () {
   }, {
     key: "_registerSensorOrMotor",
     value: function _registerSensorOrMotor(connectID, type) {
+      var _this6 = this;
       // Record which port is connected to what type of device
       this._ports[connectID - 1] = type;
 
@@ -5431,8 +5497,13 @@ var WeDo2 = /*#__PURE__*/function () {
         // Set input format for tilt or distance sensor
         var typeString = type === WeDo2Device.DISTANCE ? 'DISTANCE' : 'TILT';
         var cmd = this.generateInputCommand(connectID, type, WeDo2Mode[typeString], 1, WeDo2Unit[typeString], true);
-        this.send(BLECharacteristic.INPUT_COMMAND, cmd);
-        this._ble.startNotifications(BLEService.IO_SERVICE, BLECharacteristic.INPUT_VALUES, this._onMessage);
+        console.log('[wedo2hub3] sensor attached on port', connectID, 'type', type);
+        // Configure first, and only then subscribe to the sensor values.
+        this.send(BLECharacteristic.INPUT_COMMAND, cmd).then(function () {
+          return _this6._ble.startNotifications(BLEService.IO_SERVICE, BLECharacteristic.INPUT_VALUES, _this6._onMessage);
+        }).catch(function (e) {
+          console.warn('[wedo2hub3] sensor setup failed', e);
+        });
       }
     }
 
@@ -5918,13 +5989,13 @@ var Scratch3WeDo2Blocks = /*#__PURE__*/function () {
   }, {
     key: "motorOnFor",
     value: function motorOnFor(args) {
-      var _this2 = this;
+      var _this7 = this;
       // TODO: cast args.MOTOR_ID?
       var durationMS = Cast.toNumber(args.DURATION) * 1000;
       durationMS = MathUtil.clamp(durationMS, 0, 15000);
       return new Promise(function (resolve) {
-        _this2._forEachMotor(args.MOTOR_ID, function (motorIndex) {
-          var motor = _this2._peripheral.motor(motorIndex);
+        _this7._forEachMotor(args.MOTOR_ID, function (motorIndex) {
+          var motor = _this7._peripheral.motor(motorIndex);
           if (motor) {
             motor.turnOnFor(durationMS);
           }
@@ -5944,10 +6015,10 @@ var Scratch3WeDo2Blocks = /*#__PURE__*/function () {
   }, {
     key: "motorOn",
     value: function motorOn(args) {
-      var _this3 = this;
+      var _this8 = this;
       // TODO: cast args.MOTOR_ID?
       this._forEachMotor(args.MOTOR_ID, function (motorIndex) {
-        var motor = _this3._peripheral.motor(motorIndex);
+        var motor = _this8._peripheral.motor(motorIndex);
         if (motor) {
           motor.turnOn();
         }
@@ -5968,10 +6039,10 @@ var Scratch3WeDo2Blocks = /*#__PURE__*/function () {
   }, {
     key: "motorOff",
     value: function motorOff(args) {
-      var _this4 = this;
+      var _this9 = this;
       // TODO: cast args.MOTOR_ID?
       this._forEachMotor(args.MOTOR_ID, function (motorIndex) {
-        var motor = _this4._peripheral.motor(motorIndex);
+        var motor = _this9._peripheral.motor(motorIndex);
         if (motor) {
           motor.turnOff();
         }
@@ -5993,10 +6064,10 @@ var Scratch3WeDo2Blocks = /*#__PURE__*/function () {
   }, {
     key: "startMotorPower",
     value: function startMotorPower(args) {
-      var _this5 = this;
+      var _this0 = this;
       // TODO: cast args.MOTOR_ID?
       this._forEachMotor(args.MOTOR_ID, function (motorIndex) {
-        var motor = _this5._peripheral.motor(motorIndex);
+        var motor = _this0._peripheral.motor(motorIndex);
         if (motor) {
           motor.power = MathUtil.clamp(Cast.toNumber(args.POWER), 0, 100);
           motor.turnOn();
@@ -6020,10 +6091,10 @@ var Scratch3WeDo2Blocks = /*#__PURE__*/function () {
   }, {
     key: "setMotorDirection",
     value: function setMotorDirection(args) {
-      var _this6 = this;
+      var _this1 = this;
       // TODO: cast args.MOTOR_ID?
       this._forEachMotor(args.MOTOR_ID, function (motorIndex) {
-        var motor = _this6._peripheral.motor(motorIndex);
+        var motor = _this1._peripheral.motor(motorIndex);
         if (motor) {
           switch (args.MOTOR_DIRECTION) {
             case WeDo2MotorDirection.FORWARD:
@@ -6093,14 +6164,14 @@ var Scratch3WeDo2Blocks = /*#__PURE__*/function () {
   }, {
     key: "playNoteFor",
     value: function playNoteFor(args) {
-      var _this7 = this;
+      var _this10 = this;
       var durationMS = Cast.toNumber(args.DURATION) * 1000;
       durationMS = MathUtil.clamp(durationMS, 0, 3000);
       var note = MathUtil.clamp(Cast.toNumber(args.NOTE), 25, 125); // valid WeDo 2.0 sounds
       if (durationMS === 0) return; // WeDo 2.0 plays duration '0' forever
       return new Promise(function (resolve) {
-        var tone = _this7._noteToTone(note);
-        _this7._peripheral.playTone(tone, durationMS);
+        var tone = _this10._noteToTone(note);
+        _this10._peripheral.playTone(tone, durationMS);
 
         // Run for some time even when no piezo is connected
         setTimeout(resolve, durationMS);

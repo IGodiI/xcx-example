@@ -445,6 +445,15 @@ class WeDo2 {
          */
         this._batteryLevelIntervalId = null;
 
+        /**
+         * Queue for configuration (Input Command) writes, so they go one at a time.
+         * @type {Promise}
+         * @private
+         */
+        this._configQueue = Promise.resolve();
+        this._ledModeTime = 0;
+        this._dbgCount = 0;
+
         this.reset = this.reset.bind(this);
         this._onConnect = this._onConnect.bind(this);
         this._onMessage = this._onMessage.bind(this);
@@ -513,7 +522,15 @@ class WeDo2 {
             rgb
         );
 
-        return this.send(BLECharacteristic.OUTPUT_COMMAND, cmd);
+        // Re-send the LED mode from time to time: some hubs lose or ignore it.
+        const now = Date.now();
+        if (!this._ledModeTime || now - this._ledModeTime > 3000) {
+            this._ledModeTime = now;
+            this.setLEDMode();
+        }
+
+        // Wait until pending configuration writes are done, then set the color.
+        return this._configQueue.then(() => this.send(BLECharacteristic.OUTPUT_COMMAND, cmd));
     }
 
     /**
@@ -632,6 +649,7 @@ class WeDo2 {
      * Reset all the state and timeout/interval ids.
      */
     reset () {
+        this._ledModeTime = 0;
         this._ports = ['none', 'none'];
         this._motors = [null, null];
         this._sensors = {
@@ -672,12 +690,36 @@ class WeDo2 {
             if (!this._rateLimiter.okayToSend()) return Promise.resolve();
         }
 
-        return this._ble.write(
+        const b64 = Base64Util.uint8ArrayToBase64(message);
+        const doWrite = withResponse => this._ble.write(
             BLEService.IO_SERVICE,
             uuid,
-            Base64Util.uint8ArrayToBase64(message),
-            'base64'
+            b64,
+            'base64',
+            withResponse
         );
+
+        if (uuid === BLECharacteristic.INPUT_COMMAND) {
+            // Configuration commands: one at a time, WITH response, small gap between them.
+            const p = this._configQueue
+                .then(() => {
+                    if (!this.isConnected()) return null;
+                    return doWrite(true).catch(e => {
+                        console.warn('[wedo2hub3] write with response failed, retry without', e);
+                        return doWrite(false);
+                    });
+                })
+                .catch(e => {
+                    console.warn('[wedo2hub3] input command failed', e);
+                })
+                .then(() => new Promise(resolve => setTimeout(resolve, 100)));
+            this._configQueue = p;
+            return p;
+        }
+
+        return doWrite(null).catch(e => {
+            console.warn('[wedo2hub3] output write failed', e);
+        });
     }
 
     /**
@@ -742,13 +784,20 @@ class WeDo2 {
      * @private
      */
     _onConnect () {
-        this.setLEDMode();
-        this.setLED(0x0000FF);
+        console.log('[wedo2hub3] connected, init sequence v1.5.1');
+        this._ledModeTime = 0;
+        this._dbgCount = 0;
+        // Subscribe first, then configure the LED after a short pause.
         this._ble.startNotifications(
             BLEService.DEVICE_SERVICE,
             BLECharacteristic.ATTACHED_IO,
             this._onMessage
-        );
+        ).catch(e => {
+            console.warn('[wedo2hub3] subscribe to ATTACHED_IO failed', e);
+        }).then(() => new Promise(resolve => setTimeout(resolve, 300))
+        ).then(() => {
+            this.setLED(0x0000FF);
+        });
         this._batteryLevelIntervalId = window.setInterval(this._checkBatteryLevel, BLEBatteryCheckInterval);
     }
 
@@ -759,7 +808,10 @@ class WeDo2 {
      */
     _onMessage (base64) {
         const data = Base64Util.base64ToUint8Array(base64);
-        // log.info(data);
+        // Debug: log port attach/detach messages and the first few sensor values
+        if (data[0] === 1 || data[0] === 2 || data[0] === 5 || data[0] === 6 || this._dbgCount++ < 5) {
+            console.log('[wedo2hub3] msg', Array.prototype.slice.call(data));
+        }
 
         /**
          * If first byte of data is '1' or '2', then either clear the
@@ -802,11 +854,12 @@ class WeDo2 {
      * close the socket.
      */
     _checkBatteryLevel () {
-        this._ble.read(
+        // Wait for pending configuration writes so BLE operations do not collide.
+        this._configQueue.then(() => this._ble.read(
             BLEService.DEVICE_SERVICE,
             BLECharacteristic.LOW_VOLTAGE_ALERT,
             false
-        );
+        )).catch(() => {});
     }
 
     /**
@@ -836,12 +889,15 @@ class WeDo2 {
                 true
             );
 
-            this.send(BLECharacteristic.INPUT_COMMAND, cmd);
-            this._ble.startNotifications(
+            console.log('[wedo2hub3] sensor attached on port', connectID, 'type', type);
+            // Configure first, and only then subscribe to the sensor values.
+            this.send(BLECharacteristic.INPUT_COMMAND, cmd).then(() => this._ble.startNotifications(
                 BLEService.IO_SERVICE,
                 BLECharacteristic.INPUT_VALUES,
                 this._onMessage
-            );
+            )).catch(e => {
+                console.warn('[wedo2hub3] sensor setup failed', e);
+            });
         }
     }
 
