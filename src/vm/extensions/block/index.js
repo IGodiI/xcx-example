@@ -119,8 +119,27 @@ const WeDo2Command = {
 const WeDo2Mode = {
     TILT: 0, // angle
     DISTANCE: 0, // detect
-    LED: 1 // RGB
+    LED: 0 // color index (this hub does not accept RGB mode, only index mode works)
 };
+
+/**
+ * Color indexes of the hub LED in index mode, with approximate RGB values
+ * (index 0 = off). Used to pick the closest color for a requested RGB value.
+ * @type {Array.<Array.<number>>} - [index, r, g, b]
+ */
+const LED_PALETTE = [
+    [0, 0, 0, 0],
+    [1, 255, 0, 170],
+    [2, 150, 0, 255],
+    [3, 0, 0, 255],
+    [4, 0, 150, 255],
+    [5, 0, 255, 200],
+    [6, 0, 255, 0],
+    [7, 255, 255, 0],
+    [8, 255, 100, 0],
+    [9, 255, 0, 0],
+    [10, 255, 255, 255]
+];
 
 /**
  * Enum for units for input sensors on the WeDo 2.0.
@@ -517,10 +536,21 @@ class WeDo2 {
             (inputRGB) & 0x000000FF
         ];
 
+        // Pick the closest color index from the palette
+        let best = 0;
+        let bestDist = Infinity;
+        for (const [index, r, g, b] of LED_PALETTE) {
+            const dist = (rgb[0] - r) * (rgb[0] - r) + (rgb[1] - g) * (rgb[1] - g) + (rgb[2] - b) * (rgb[2] - b);
+            if (dist < bestDist) {
+                bestDist = dist;
+                best = index;
+            }
+        }
+
         const cmd = this.generateOutputCommand(
             WeDo2ConnectID.LED,
             WeDo2Command.WRITE_RGB,
-            rgb
+            [best]
         );
 
         // Re-send the LED mode from time to time: some hubs lose or ignore it.
@@ -559,7 +589,7 @@ class WeDo2 {
         const cmd = this.generateOutputCommand(
             WeDo2ConnectID.LED,
             WeDo2Command.WRITE_RGB,
-            [0, 0, 0]
+            [0] // color index 0 = off
         );
 
         return this.send(BLECharacteristic.OUTPUT_COMMAND, cmd);
@@ -785,7 +815,7 @@ class WeDo2 {
      * @private
      */
     _onConnect () {
-        console.log('[wedo2hub3] connected, init sequence v1.5.2');
+        console.log('[wedo2hub3] connected, init sequence v1.5.3');
         this._ledModeTime = 0;
         this._dbgCount = 0;
         // Subscribe first, then configure the LED after a short pause.
