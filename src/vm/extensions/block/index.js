@@ -8,6 +8,20 @@ import Base64Util from '../../util/base64-util';
 import MathUtil from '../../util/math-util';
 import RateLimiter from '../../util/rateLimiter.js';
 import log from '../../util/log';
+import translations from './translations.json';
+
+let setupTranslationsDone = false;
+const setupTranslations = () => {
+    if (setupTranslationsDone) return;
+    const localeSetup = formatMessage.setup();
+    if (localeSetup && localeSetup.translations[localeSetup.locale]) {
+        Object.assign(
+            localeSetup.translations[localeSetup.locale],
+            translations[localeSetup.locale]
+        );
+    }
+    setupTranslationsDone = true;
+};
 
 /**
  * Icon svg to be displayed at the left edge of each extension block, encoded as a data URI.
@@ -932,6 +946,7 @@ class Scratch3WeDo2Blocks {
      * @returns {object} metadata for this extension and its blocks.
      */
     getInfo () {
+        setupTranslations();
         const info = {
             id: Scratch3WeDo2Blocks.EXTENSION_ID,
             name: 'WeDo 2.0 (хаб 2)',
@@ -1124,12 +1139,20 @@ class Scratch3WeDo2Blocks {
                 },
                 {
                     opcode: 'getDistanceA',
-                    text: 'distance (A)',
+                    text: formatMessage({
+                        id: 'wedo2.getDistanceA',
+                        default: 'distance (A)',
+                        description: 'the value returned by the distance sensor on port A'
+                    }),
                     blockType: BlockType.REPORTER
                 },
                 {
                     opcode: 'getDistanceB',
-                    text: 'distance (B)',
+                    text: formatMessage({
+                        id: 'wedo2.getDistanceB',
+                        default: 'distance (B)',
+                        description: 'the value returned by the distance sensor on port B'
+                    }),
                     blockType: BlockType.REPORTER
                 },
                 {

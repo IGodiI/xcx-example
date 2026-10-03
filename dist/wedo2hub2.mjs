@@ -2,7 +2,7 @@ var img$1 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAlgAAAF0CAYAAAD/4EcMA
 
 var img = "data:image/svg+xml,%3c%3fxml version='1.0' encoding='UTF-8' standalone='no'%3f%3e%3c!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'%3e%3csvg width='100%25' height='100%25' viewBox='0 0 53 53' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' xml:space='preserve' xmlns:serif='http://www.serif.com/' style='fill-rule:evenodd%3bclip-rule:evenodd%3bstroke-linejoin:round%3bstroke-miterlimit:2%3b'%3e%3crect id='%e3%82%a2%e3%83%bc%e3%83%88%e3%83%9c%e3%83%bc%e3%83%891' x='0' y='-0' width='52.083' height='52.056' style='fill:none%3b'/%3e%3cclipPath id='_clip1'%3e%3crect x='0' y='-0' width='52.083' height='52.056'/%3e%3c/clipPath%3e%3cg clip-path='url(%23_clip1)'%3e%3cg%3e%3cg%3e%3cpath d='M17.605%2c14.113c1.125%2c0.983 1.582%2c2.148 2.563%2c3.17c2.407%2c2.507 4.811%2c5.102 7.423%2c7.551c4.352%2c4.079 10.045%2c7.577 14.675%2c11.435' style='fill:none%3bstroke:white%3bstroke-width:19.17px%3bstroke-linecap:round%3bstroke-miterlimit:1.5%3b'/%3e%3cpath d='M40.824%2c11.292c-0.914%2c2.03 -3.668%2c3.898 -5.723%2c5.559c-2.684%2c2.171 -5.276%2c4.398 -7.941%2c6.581c-7.278%2c5.958 -12.955%2c12.359 -18.301%2c19.04' style='fill:none%3bstroke:white%3bstroke-width:19.17px%3bstroke-linecap:round%3bstroke-miterlimit:1.5%3b'/%3e%3c/g%3e%3cg%3e%3cpath d='M17.605%2c14.113c1.125%2c0.983 1.582%2c2.148 2.563%2c3.17c2.407%2c2.507 4.811%2c5.102 7.423%2c7.551c4.352%2c4.079 10.045%2c7.577 14.675%2c11.435' style='fill:none%3bstroke:%23f9a83a%3bstroke-width:12.5px%3bstroke-linecap:round%3bstroke-miterlimit:1.5%3b'/%3e%3cpath d='M40.824%2c11.292c-0.914%2c2.03 -3.668%2c3.898 -5.723%2c5.559c-2.684%2c2.171 -5.276%2c4.398 -7.941%2c6.581c-7.278%2c5.958 -12.955%2c12.359 -18.301%2c19.04' style='fill:none%3bstroke:%23f9a83a%3bstroke-width:12.5px%3bstroke-linecap:round%3bstroke-miterlimit:1.5%3b'/%3e%3c/g%3e%3cg%3e%3cpath d='M16.783%2c15.055c0.264%2c0.231 0.482%2c0.475 0.679%2c0.725c0.621%2c0.785 1.078%2c1.612 1.804%2c2.368c1.456%2c1.517 2.91%2c3.065 4.41%2c4.594c0.996%2c1.015 2.012%2c2.021 3.06%2c3.004c1.353%2c1.268 2.831%2c2.481 4.368%2c3.666c3.429%2c2.643 7.152%2c5.143 10.362%2c7.817c0.53%2c0.442 1.319%2c0.37 1.76%2c-0.16c0.442%2c-0.53 0.37%2c-1.319 -0.16%2c-1.76c-3.233%2c-2.694 -6.982%2c-5.215 -10.435%2c-7.877c-1.472%2c-1.135 -2.89%2c-2.296 -4.185%2c-3.51c-1.023%2c-0.959 -2.014%2c-1.941 -2.985%2c-2.931c-1.494%2c-1.522 -2.942%2c-3.064 -4.392%2c-4.574c-0.667%2c-0.695 -1.075%2c-1.465 -1.645%2c-2.187c-0.288%2c-0.365 -0.61%2c-0.72 -0.997%2c-1.058c-0.52%2c-0.454 -1.31%2c-0.4 -1.764%2c0.119c-0.453%2c0.52 -0.4%2c1.31 0.12%2c1.764Z' style='fill:white%3b'/%3e%3cpath d='M39.685%2c10.779c-0.331%2c0.733 -0.963%2c1.428 -1.694%2c2.108c-1.138%2c1.059 -2.52%2c2.058 -3.676%2c2.992l-7.947%2c6.585c-3.596%2c2.944 -6.805%2c5.995 -9.778%2c9.133c-3.104%2c3.276 -5.949%2c6.648 -8.707%2c10.094c-0.431%2c0.539 -0.343%2c1.326 0.195%2c1.757c0.539%2c0.431 1.326%2c0.344 1.757%2c-0.195c2.715%2c-3.392 5.515%2c-6.712 8.57%2c-9.937c2.903%2c-3.064 6.036%2c-6.043 9.547%2c-8.917l7.935%2c-6.576c1.418%2c-1.146 3.155%2c-2.393 4.43%2c-3.716c0.716%2c-0.743 1.293%2c-1.516 1.647%2c-2.301c0.283%2c-0.629 0.003%2c-1.37 -0.626%2c-1.653c-0.629%2c-0.284 -1.37%2c-0.003 -1.653%2c0.626Z' style='fill:white%3b'/%3e%3c/g%3e%3c/g%3e%3c/g%3e%3c/svg%3e";
 
-var en = {
+var en$1 = {
 	"xcratchExample.entry.name": "Xcratch Example",
 	"xcratchExample.entry.description": "Do it in JavaScript"
 };
@@ -10,8 +10,8 @@ var ja = {
 	"xcratchExample.entry.name": "Xcratchの例",
 	"xcratchExample.entry.description": "JavaScriptを実行する"
 };
-var translations = {
-	en: en,
+var translations$1 = {
+	en: en$1,
 	ja: ja,
 	"ja-Hira": {
 	"xcratchExample.entry.name": "エクスクラッチのれい",
@@ -65,7 +65,7 @@ var entry = {
   setFormatMessage: function setFormatMessage(formatter) {
     formatMessage$2 = formatter;
   },
-  translationMap: translations
+  translationMap: translations$1
 };
 
 function _classCallCheck(a, n) {
@@ -6249,9 +6249,79 @@ var RateLimiter = /*@__PURE__*/getDefaultExportFromCjs(rateLimiterExports);
 var logExports = requireLog();
 var log = /*@__PURE__*/getDefaultExportFromCjs(logExports);
 
+var en = {
+	"wedo2.motorOnFor": "turn [MOTOR_ID] on for [DURATION] seconds",
+	"wedo2.motorOn": "turn [MOTOR_ID] on",
+	"wedo2.motorOff": "turn [MOTOR_ID] off",
+	"wedo2.startMotorPower": "set [MOTOR_ID] power to [POWER]",
+	"wedo2.setMotorDirection": "set [MOTOR_ID] direction to [MOTOR_DIRECTION]",
+	"wedo2.setLightHue": "set light color to [HUE]",
+	"wedo2.playNoteFor": "play note [NOTE] for [DURATION] seconds",
+	"wedo2.whenDistance": "when distance [OP] [REFERENCE]",
+	"wedo2.whenTilted": "when tilted [TILT_DIRECTION_ANY]",
+	"wedo2.getDistance": "distance, port [PORT]",
+	"wedo2.isTilted": "tilted [TILT_DIRECTION_ANY] on port [PORT]?",
+	"wedo2.getTiltAngle": "tilt angle [TILT_DIRECTION] on port [PORT]",
+	"wedo2.getDistanceA": "distance (A)",
+	"wedo2.getDistanceB": "distance (B)",
+	"wedo2.motorId.default": "motor",
+	"wedo2.motorId.a": "motor A",
+	"wedo2.motorId.b": "motor B",
+	"wedo2.motorId.all": "all motors",
+	"wedo2.motorDirection.forward": "this way",
+	"wedo2.motorDirection.backward": "that way",
+	"wedo2.motorDirection.reverse": "reverse",
+	"wedo2.tiltDirection.up": "up",
+	"wedo2.tiltDirection.down": "down",
+	"wedo2.tiltDirection.left": "left",
+	"wedo2.tiltDirection.right": "right",
+	"wedo2.tiltDirection.any": "any"
+};
+var ru = {
+	"wedo2.motorOnFor": "включить [MOTOR_ID] на [DURATION] секунд",
+	"wedo2.motorOn": "включить [MOTOR_ID]",
+	"wedo2.motorOff": "выключить [MOTOR_ID]",
+	"wedo2.startMotorPower": "установить мощность [MOTOR_ID] в [POWER]",
+	"wedo2.setMotorDirection": "установить направление [MOTOR_ID] в [MOTOR_DIRECTION]",
+	"wedo2.setLightHue": "установить цвет лампочки [HUE]",
+	"wedo2.playNoteFor": "играть ноту [NOTE] [DURATION] секунд",
+	"wedo2.whenDistance": "когда расстояние [OP] [REFERENCE]",
+	"wedo2.whenTilted": "когда наклонён [TILT_DIRECTION_ANY]",
+	"wedo2.getDistance": "расстояние, порт [PORT]",
+	"wedo2.isTilted": "наклонён [TILT_DIRECTION_ANY] на порту [PORT]?",
+	"wedo2.getTiltAngle": "угол наклона [TILT_DIRECTION] на порту [PORT]",
+	"wedo2.getDistanceA": "расстояние (A)",
+	"wedo2.getDistanceB": "расстояние (B)",
+	"wedo2.motorId.default": "мотор",
+	"wedo2.motorId.a": "мотор A",
+	"wedo2.motorId.b": "мотор B",
+	"wedo2.motorId.all": "все моторы",
+	"wedo2.motorDirection.forward": "туда",
+	"wedo2.motorDirection.backward": "сюда",
+	"wedo2.motorDirection.reverse": "в обратную сторону",
+	"wedo2.tiltDirection.up": "вверх",
+	"wedo2.tiltDirection.down": "вниз",
+	"wedo2.tiltDirection.left": "влево",
+	"wedo2.tiltDirection.right": "вправо",
+	"wedo2.tiltDirection.any": "любая"
+};
+var translations = {
+	en: en,
+	ru: ru
+};
+
 function _createForOfIteratorHelper(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (!t) { if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e) { t && (r = t); var _n = 0, F = function F() {}; return { s: F, n: function n() { return _n >= r.length ? { done: true } : { done: false, value: r[_n++] }; }, e: function e(r) { throw r; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var o, a = true, u = false; return { s: function s() { t = t.call(r); }, n: function n() { var r = t.next(); return a = r.done, r; }, e: function e(r) { u = true, o = r; }, f: function f() { try { a || null == t.return || t.return(); } finally { if (u) throw o; } } }; }
 function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
 function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+var setupTranslationsDone = false;
+var setupTranslations = function setupTranslations() {
+  if (setupTranslationsDone) return;
+  var localeSetup = formatMessage.setup();
+  if (localeSetup && localeSetup.translations[localeSetup.locale]) {
+    Object.assign(localeSetup.translations[localeSetup.locale], translations[localeSetup.locale]);
+  }
+  setupTranslationsDone = true;
+};
 
 /**
  * Icon svg to be displayed at the left edge of each extension block, encoded as a data URI.
@@ -7150,6 +7220,7 @@ var Scratch3WeDo2Blocks = /*#__PURE__*/function () {
   return _createClass(Scratch3WeDo2Blocks, [{
     key: "getInfo",
     value: function getInfo() {
+      setupTranslations();
       var info = {
         id: Scratch3WeDo2Blocks.EXTENSION_ID,
         name: 'WeDo 2.0 (хаб 2)',
@@ -7332,11 +7403,19 @@ var Scratch3WeDo2Blocks = /*#__PURE__*/function () {
           }
         }, {
           opcode: 'getDistanceA',
-          text: 'distance (A)',
+          text: formatMessage({
+            id: 'wedo2.getDistanceA',
+            default: 'distance (A)',
+            description: 'the value returned by the distance sensor on port A'
+          }),
           blockType: BlockType.REPORTER
         }, {
           opcode: 'getDistanceB',
-          text: 'distance (B)',
+          text: formatMessage({
+            id: 'wedo2.getDistanceB',
+            default: 'distance (B)',
+            description: 'the value returned by the distance sensor on port B'
+          }),
           blockType: BlockType.REPORTER
         }, {
           opcode: 'isTilted',

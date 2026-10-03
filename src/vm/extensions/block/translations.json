@@ -1,14 +1,58 @@
 {
   "en": {
-    "xcratchExample.name": "Xcratch Example",
-    "xcratchExample.doIt": "do it [SCRIPT]"
+    "wedo2.motorOnFor": "turn [MOTOR_ID] on for [DURATION] seconds",
+    "wedo2.motorOn": "turn [MOTOR_ID] on",
+    "wedo2.motorOff": "turn [MOTOR_ID] off",
+    "wedo2.startMotorPower": "set [MOTOR_ID] power to [POWER]",
+    "wedo2.setMotorDirection": "set [MOTOR_ID] direction to [MOTOR_DIRECTION]",
+    "wedo2.setLightHue": "set light color to [HUE]",
+    "wedo2.playNoteFor": "play note [NOTE] for [DURATION] seconds",
+    "wedo2.whenDistance": "when distance [OP] [REFERENCE]",
+    "wedo2.whenTilted": "when tilted [TILT_DIRECTION_ANY]",
+    "wedo2.getDistance": "distance, port [PORT]",
+    "wedo2.isTilted": "tilted [TILT_DIRECTION_ANY] on port [PORT]?",
+    "wedo2.getTiltAngle": "tilt angle [TILT_DIRECTION] on port [PORT]",
+    "wedo2.getDistanceA": "distance (A)",
+    "wedo2.getDistanceB": "distance (B)",
+    "wedo2.motorId.default": "motor",
+    "wedo2.motorId.a": "motor A",
+    "wedo2.motorId.b": "motor B",
+    "wedo2.motorId.all": "all motors",
+    "wedo2.motorDirection.forward": "this way",
+    "wedo2.motorDirection.backward": "that way",
+    "wedo2.motorDirection.reverse": "reverse",
+    "wedo2.tiltDirection.up": "up",
+    "wedo2.tiltDirection.down": "down",
+    "wedo2.tiltDirection.left": "left",
+    "wedo2.tiltDirection.right": "right",
+    "wedo2.tiltDirection.any": "any"
   },
-  "ja": {
-    "xcratchExample.name": "Xcratchの例",
-    "xcratchExample.doIt": "[SCRIPT] を実行する"
-  },
-  "ja-Hira": {
-    "xcratchExample.name": "エクスクラッチのれい",
-    "xcratchExample.doIt": "[SCRIPT] をじっこうする"
+  "ru": {
+    "wedo2.motorOnFor": "включить [MOTOR_ID] на [DURATION] секунд",
+    "wedo2.motorOn": "включить [MOTOR_ID]",
+    "wedo2.motorOff": "выключить [MOTOR_ID]",
+    "wedo2.startMotorPower": "установить мощность [MOTOR_ID] в [POWER]",
+    "wedo2.setMotorDirection": "установить направление [MOTOR_ID] в [MOTOR_DIRECTION]",
+    "wedo2.setLightHue": "установить цвет лампочки [HUE]",
+    "wedo2.playNoteFor": "играть ноту [NOTE] [DURATION] секунд",
+    "wedo2.whenDistance": "когда расстояние [OP] [REFERENCE]",
+    "wedo2.whenTilted": "когда наклонён [TILT_DIRECTION_ANY]",
+    "wedo2.getDistance": "расстояние, порт [PORT]",
+    "wedo2.isTilted": "наклонён [TILT_DIRECTION_ANY] на порту [PORT]?",
+    "wedo2.getTiltAngle": "угол наклона [TILT_DIRECTION] на порту [PORT]",
+    "wedo2.getDistanceA": "расстояние (A)",
+    "wedo2.getDistanceB": "расстояние (B)",
+    "wedo2.motorId.default": "мотор",
+    "wedo2.motorId.a": "мотор A",
+    "wedo2.motorId.b": "мотор B",
+    "wedo2.motorId.all": "все моторы",
+    "wedo2.motorDirection.forward": "туда",
+    "wedo2.motorDirection.backward": "сюда",
+    "wedo2.motorDirection.reverse": "в обратную сторону",
+    "wedo2.tiltDirection.up": "вверх",
+    "wedo2.tiltDirection.down": "вниз",
+    "wedo2.tiltDirection.left": "влево",
+    "wedo2.tiltDirection.right": "вправо",
+    "wedo2.tiltDirection.any": "любая"
   }
 }
