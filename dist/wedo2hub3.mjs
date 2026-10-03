@@ -68,6 +68,57 @@ var entry = {
   translationMap: translations$1
 };
 
+function _arrayWithHoles(r) {
+  if (Array.isArray(r)) return r;
+}
+
+function _iterableToArrayLimit(r, l) {
+  var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"];
+  if (null != t) {
+    var e,
+      n,
+      i,
+      u,
+      a = [],
+      f = true,
+      o = false;
+    try {
+      if (i = (t = t.call(r)).next, 0 === l) ; else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0);
+    } catch (r) {
+      o = true, n = r;
+    } finally {
+      try {
+        if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return;
+      } finally {
+        if (o) throw n;
+      }
+    }
+    return a;
+  }
+}
+
+function _arrayLikeToArray$1(r, a) {
+  (null == a || a > r.length) && (a = r.length);
+  for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
+  return n;
+}
+
+function _unsupportedIterableToArray$1(r, a) {
+  if (r) {
+    if ("string" == typeof r) return _arrayLikeToArray$1(r, a);
+    var t = {}.toString.call(r).slice(8, -1);
+    return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray$1(r, a) : void 0;
+  }
+}
+
+function _nonIterableRest() {
+  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+
+function _slicedToArray(r, e) {
+  return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray$1(r, e) || _nonIterableRest();
+}
+
 function _classCallCheck(a, n) {
   if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function");
 }
@@ -908,26 +959,12 @@ function requireJsonrpc() {
   return jsonrpc;
 }
 
-function _arrayLikeToArray$1(r, a) {
-  (null == a || a > r.length) && (a = r.length);
-  for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
-  return n;
-}
-
 function _arrayWithoutHoles(r) {
   if (Array.isArray(r)) return _arrayLikeToArray$1(r);
 }
 
 function _iterableToArray(r) {
   if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r);
-}
-
-function _unsupportedIterableToArray$1(r, a) {
-  if (r) {
-    if ("string" == typeof r) return _arrayLikeToArray$1(r, a);
-    var t = {}.toString.call(r).slice(8, -1);
-    return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray$1(r, a) : void 0;
-  }
 }
 
 function _nonIterableSpread() {
@@ -4724,8 +4761,15 @@ var WeDo2Mode = {
   // angle
   DISTANCE: 0,
   // detect
-  LED: 1 // RGB
+  LED: 0 // color index (this hub does not accept RGB mode, only index mode works)
 };
+
+/**
+ * Color indexes of the hub LED in index mode, with approximate RGB values
+ * (index 0 = off). Used to pick the closest color for a requested RGB value.
+ * @type {Array.<Array.<number>>} - [index, r, g, b]
+ */
+var LED_PALETTE = [[0, 0, 0, 0], [1, 255, 0, 170], [2, 150, 0, 255], [3, 0, 0, 255], [4, 0, 150, 255], [5, 0, 255, 200], [6, 0, 255, 0], [7, 255, 255, 0], [8, 255, 100, 0], [9, 255, 0, 0], [10, 255, 255, 255]];
 
 /**
  * Enum for units for input sensors on the WeDo 2.0.
@@ -5138,7 +5182,23 @@ var WeDo2 = /*#__PURE__*/function () {
     value: function setLED(inputRGB) {
       var _this2 = this;
       var rgb = [inputRGB >> 16 & 0x000000FF, inputRGB >> 8 & 0x000000FF, inputRGB & 0x000000FF];
-      var cmd = this.generateOutputCommand(WeDo2ConnectID.LED, WeDo2Command.WRITE_RGB, rgb);
+
+      // Pick the closest color index from the palette
+      var best = 0;
+      var bestDist = Infinity;
+      for (var _i = 0, _LED_PALETTE = LED_PALETTE; _i < _LED_PALETTE.length; _i++) {
+        var _LED_PALETTE$_i = _slicedToArray(_LED_PALETTE[_i], 4),
+          index = _LED_PALETTE$_i[0],
+          r = _LED_PALETTE$_i[1],
+          g = _LED_PALETTE$_i[2],
+          b = _LED_PALETTE$_i[3];
+        var dist = (rgb[0] - r) * (rgb[0] - r) + (rgb[1] - g) * (rgb[1] - g) + (rgb[2] - b) * (rgb[2] - b);
+        if (dist < bestDist) {
+          bestDist = dist;
+          best = index;
+        }
+      }
+      var cmd = this.generateOutputCommand(WeDo2ConnectID.LED, WeDo2Command.WRITE_RGB, [best]);
 
       // Re-send the LED mode from time to time: some hubs lose or ignore it.
       var now = Date.now();
@@ -5171,7 +5231,8 @@ var WeDo2 = /*#__PURE__*/function () {
   }, {
     key: "stopLED",
     value: function stopLED() {
-      var cmd = this.generateOutputCommand(WeDo2ConnectID.LED, WeDo2Command.WRITE_RGB, [0, 0, 0]);
+      var cmd = this.generateOutputCommand(WeDo2ConnectID.LED, WeDo2Command.WRITE_RGB, [0] // color index 0 = off
+      );
       return this.send(BLECharacteristic.OUTPUT_COMMAND, cmd);
     }
 
@@ -5394,7 +5455,7 @@ var WeDo2 = /*#__PURE__*/function () {
     key: "_onConnect",
     value: function _onConnect() {
       var _this4 = this;
-      console.log('[wedo2hub3] connected, init sequence v1.5.2');
+      console.log('[wedo2hub3] connected, init sequence v1.5.3');
       this._ledModeTime = 0;
       this._dbgCount = 0;
       // Subscribe first, then configure the LED after a short pause.
