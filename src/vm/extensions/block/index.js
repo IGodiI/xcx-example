@@ -10,9 +10,7 @@ import RateLimiter from '../../util/rateLimiter.js';
 import log from '../../util/log';
 import translations from './translations.json';
 
-let setupTranslationsDone = false;
 const setupTranslations = () => {
-    if (setupTranslationsDone) return;
     const localeSetup = formatMessage.setup();
     if (localeSetup && localeSetup.translations[localeSetup.locale]) {
         Object.assign(
@@ -20,7 +18,6 @@ const setupTranslations = () => {
             translations[localeSetup.locale]
         );
     }
-    setupTranslationsDone = true;
 };
 
 /**
