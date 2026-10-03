@@ -457,6 +457,7 @@ class WeDo2 {
         this.reset = this.reset.bind(this);
         this._onConnect = this._onConnect.bind(this);
         this._onMessage = this._onMessage.bind(this);
+        this._onSensorValues = this._onSensorValues.bind(this);
         this._checkBatteryLevel = this._checkBatteryLevel.bind(this);
     }
 
@@ -784,7 +785,7 @@ class WeDo2 {
      * @private
      */
     _onConnect () {
-        console.log('[wedo2hub3] connected, init sequence v1.5.1');
+        console.log('[wedo2hub3] connected, init sequence v1.5.2');
         this._ledModeTime = 0;
         this._dbgCount = 0;
         // Subscribe first, then configure the LED after a short pause.
@@ -807,45 +808,46 @@ class WeDo2 {
      * @private
      */
     _onMessage (base64) {
+        // Handler for the ATTACHED_IO characteristic only: ports being plugged / unplugged.
         const data = Base64Util.base64ToUint8Array(base64);
-        // Debug: log port attach/detach messages and the first few sensor values
-        if (data[0] === 1 || data[0] === 2 || data[0] === 5 || data[0] === 6 || this._dbgCount++ < 5) {
-            console.log('[wedo2hub3] msg', Array.prototype.slice.call(data));
+        console.log(`[wedo2hub3] ${(performance.now() / 1000).toFixed(2)}s ATTACHED_IO`, this._hex(data));
+
+        const connectID = data[0];
+        if (connectID !== 1 && connectID !== 2) return; // internal devices (piezo, LED) are not handled here
+
+        if (data[1] === 0) {
+            // clear sensor or motor
+            this._clearPort(connectID);
+        } else if (data.length >= 4) {
+            // register sensor or motor
+            this._registerSensorOrMotor(connectID, data[3]);
+        }
+    }
+
+    /**
+     * Handler for the INPUT_VALUES characteristic only: sensor readings.
+     * @param {object} base64 - the incoming BLE data.
+     * @private
+     */
+    _onSensorValues (base64) {
+        const data = Base64Util.base64ToUint8Array(base64);
+        if (this._dbgCount++ < 20) {
+            console.log(`[wedo2hub3] ${(performance.now() / 1000).toFixed(2)}s VALUES`, this._hex(data));
         }
 
-        /**
-         * If first byte of data is '1' or '2', then either clear the
-         * sensor present in ports 1 or 2 or set their format.
-         *
-         * If first byte of data is anything else, read incoming sensor value.
-         */
-        switch (data[0]) {
-        case 1:
-        case 2: {
-            const connectID = data[0];
-            if (data[1] === 0) {
-                // clear sensor or motor
-                this._clearPort(connectID);
-            } else {
-                // register sensor or motor
-                this._registerSensorOrMotor(connectID, data[3]);
-            }
-            break;
+        const connectID = data[1];
+        const type = this._ports[connectID - 1];
+        if (type === WeDo2Device.DISTANCE) {
+            this._sensors.distance[connectID - 1] = data[2];
         }
-        default: {
-            // read incoming sensor value
-            const connectID = data[1];
-            const type = this._ports[connectID - 1];
-            if (type === WeDo2Device.DISTANCE) {
-                this._sensors.distance[connectID - 1] = data[2];
-            }
-            if (type === WeDo2Device.TILT) {
-                this._sensors.tiltX[connectID - 1] = data[2];
-                this._sensors.tiltY[connectID - 1] = data[3];
-            }
-            break;
+        if (type === WeDo2Device.TILT) {
+            this._sensors.tiltX[connectID - 1] = data[2];
+            this._sensors.tiltY[connectID - 1] = data[3];
         }
-        }
+    }
+
+    _hex (data) {
+        return Array.prototype.map.call(data, b => b.toString(16).padStart(2, '0')).join(' ');
     }
 
     /**
@@ -889,12 +891,12 @@ class WeDo2 {
                 true
             );
 
-            console.log('[wedo2hub3] sensor attached on port', connectID, 'type', type);
+            console.log(`[wedo2hub3] ${(performance.now() / 1000).toFixed(2)}s configuring sensor, port`, connectID, 'type', type);
             // Configure first, and only then subscribe to the sensor values.
             this.send(BLECharacteristic.INPUT_COMMAND, cmd).then(() => this._ble.startNotifications(
                 BLEService.IO_SERVICE,
                 BLECharacteristic.INPUT_VALUES,
-                this._onMessage
+                this._onSensorValues
             )).catch(e => {
                 console.warn('[wedo2hub3] sensor setup failed', e);
             });
