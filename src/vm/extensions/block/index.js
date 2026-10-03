@@ -1,7 +1,7 @@
 import ArgumentType from '../../extension-support/argument-type';
 import BlockType from '../../extension-support/block-type';
 import Cast from '../../util/cast';
-import formatMessage from 'format-message';
+let formatMessage = messageData => messageData.default;
 import color from '../../util/color';
 import BLE from './ble';
 import Base64Util from '../../util/base64-util';
@@ -909,6 +909,11 @@ const WeDo2TiltDirection = {
  * Scratch 3.0 blocks to interact with a LEGO WeDo 2.0 peripheral.
  */
 class Scratch3WeDo2Blocks {
+    static set formatMessage (formatter) {
+        formatMessage = formatter;
+        if (formatMessage) setupTranslations();
+    }
+
 
     /**
      * @return {string} - the ID of this extension.
@@ -934,6 +939,10 @@ class Scratch3WeDo2Blocks {
          * @type {Runtime}
          */
         this.runtime = runtime;
+
+        if (runtime.formatMessage) {
+            formatMessage = runtime.formatMessage;
+        }
 
         // Create a new WeDo 2.0 peripheral instance
         this._peripheral = new WeDo2(this.runtime, Scratch3WeDo2Blocks.EXTENSION_ID);
