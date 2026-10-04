@@ -4676,7 +4676,8 @@ var iconURI = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQCAYAAACOEfK
  */
 var BLEService = {
   DEVICE_SERVICE: '00001523-1212-efde-1523-785feabcd123',
-  IO_SERVICE: '00004f0e-1212-efde-1523-785feabcd123'
+  IO_SERVICE: '00004f0e-1212-efde-1523-785feabcd123',
+  DEVICE_INFO_SERVICE: '0000180a-0000-1000-8000-00805f9b34fb'
 };
 
 /**
@@ -4697,7 +4698,8 @@ var BLECharacteristic = {
   LOW_VOLTAGE_ALERT: '00001528-1212-efde-1523-785feabcd123',
   INPUT_VALUES: '00001560-1212-efde-1523-785feabcd123',
   INPUT_COMMAND: '00001563-1212-efde-1523-785feabcd123',
-  OUTPUT_COMMAND: '00001565-1212-efde-1523-785feabcd123'
+  OUTPUT_COMMAND: '00001565-1212-efde-1523-785feabcd123',
+  MANUFACTURER_NAME: '00002a29-0000-1000-8000-00805f9b34fb'
 };
 
 /**
@@ -4770,6 +4772,12 @@ var WeDo2Mode = {
  * @type {Array.<Array.<number>>} - [index, r, g, b]
  */
 var LED_PALETTE = [[0, 0, 0, 0], [1, 255, 0, 170], [2, 150, 0, 255], [3, 0, 0, 255], [4, 0, 150, 255], [5, 0, 255, 200], [6, 0, 255, 0], [7, 255, 255, 0], [8, 255, 100, 0], [9, 255, 0, 0], [10, 255, 255, 255]];
+
+/**
+ * Color index that turns the LED off in index mode.
+ * @type {number}
+ */
+var LED_OFF_INDEX = 0;
 
 /**
  * Enum for units for input sensors on the WeDo 2.0.
@@ -5107,6 +5115,12 @@ var WeDo2 = /*#__PURE__*/function () {
      */
     this._configQueue = Promise.resolve();
     this._ledModeTime = 0;
+    /**
+     * True if the hub accepts RGB mode for the LED (genuine-like hubs).
+     * Other hubs only accept color indexes.
+     * @type {boolean}
+     */
+    this._ledRgb = false;
     this._dbgCount = 0;
     this.reset = this.reset.bind(this);
     this._onConnect = this._onConnect.bind(this);
@@ -5182,23 +5196,28 @@ var WeDo2 = /*#__PURE__*/function () {
     value: function setLED(inputRGB) {
       var _this2 = this;
       var rgb = [inputRGB >> 16 & 0x000000FF, inputRGB >> 8 & 0x000000FF, inputRGB & 0x000000FF];
-
-      // Pick the closest color index from the palette
-      var best = 0;
-      var bestDist = Infinity;
-      for (var _i = 0, _LED_PALETTE = LED_PALETTE; _i < _LED_PALETTE.length; _i++) {
-        var _LED_PALETTE$_i = _slicedToArray(_LED_PALETTE[_i], 4),
-          index = _LED_PALETTE$_i[0],
-          r = _LED_PALETTE$_i[1],
-          g = _LED_PALETTE$_i[2],
-          b = _LED_PALETTE$_i[3];
-        var dist = (rgb[0] - r) * (rgb[0] - r) + (rgb[1] - g) * (rgb[1] - g) + (rgb[2] - b) * (rgb[2] - b);
-        if (dist < bestDist) {
-          bestDist = dist;
-          best = index;
+      var cmd;
+      if (this._ledRgb) {
+        // RGB mode: three bytes
+        cmd = this.generateOutputCommand(WeDo2ConnectID.LED, WeDo2Command.WRITE_RGB, rgb);
+      } else {
+        // Color index mode: pick the closest color from the palette
+        var best = 0;
+        var bestDist = Infinity;
+        for (var _i = 0, _LED_PALETTE = LED_PALETTE; _i < _LED_PALETTE.length; _i++) {
+          var _LED_PALETTE$_i = _slicedToArray(_LED_PALETTE[_i], 4),
+            index = _LED_PALETTE$_i[0],
+            r = _LED_PALETTE$_i[1],
+            g = _LED_PALETTE$_i[2],
+            b = _LED_PALETTE$_i[3];
+          var dist = (rgb[0] - r) * (rgb[0] - r) + (rgb[1] - g) * (rgb[1] - g) + (rgb[2] - b) * (rgb[2] - b);
+          if (dist < bestDist) {
+            bestDist = dist;
+            best = index;
+          }
         }
+        cmd = this.generateOutputCommand(WeDo2ConnectID.LED, WeDo2Command.WRITE_RGB, [best]);
       }
-      var cmd = this.generateOutputCommand(WeDo2ConnectID.LED, WeDo2Command.WRITE_RGB, [best]);
 
       // Re-send the LED mode from time to time: some hubs lose or ignore it.
       var now = Date.now();
@@ -5220,7 +5239,9 @@ var WeDo2 = /*#__PURE__*/function () {
   }, {
     key: "setLEDMode",
     value: function setLEDMode() {
-      var cmd = this.generateInputCommand(WeDo2ConnectID.LED, WeDo2Device.LED, WeDo2Mode.LED, 0, WeDo2Unit.LED, false);
+      var cmd = this.generateInputCommand(WeDo2ConnectID.LED, WeDo2Device.LED, this._ledRgb ? 1 : WeDo2Mode.LED,
+      // 1 = RGB, 0 = color index
+      0, WeDo2Unit.LED, false);
       return this.send(BLECharacteristic.INPUT_COMMAND, cmd);
     }
 
@@ -5231,8 +5252,7 @@ var WeDo2 = /*#__PURE__*/function () {
   }, {
     key: "stopLED",
     value: function stopLED() {
-      var cmd = this.generateOutputCommand(WeDo2ConnectID.LED, WeDo2Command.WRITE_RGB, [0] // color index 0 = off
-      );
+      var cmd = this.generateOutputCommand(WeDo2ConnectID.LED, WeDo2Command.WRITE_RGB, this._ledRgb ? [0, 0, 0] : [LED_OFF_INDEX]);
       return this.send(BLECharacteristic.OUTPUT_COMMAND, cmd);
     }
 
@@ -5287,7 +5307,7 @@ var WeDo2 = /*#__PURE__*/function () {
         filters: [{
           services: [BLEService.DEVICE_SERVICE]
         }],
-        optionalServices: [BLEService.IO_SERVICE]
+        optionalServices: [BLEService.IO_SERVICE, BLEService.DEVICE_INFO_SERVICE]
       }, this._onConnect, this.reset);
     }
 
@@ -5455,11 +5475,23 @@ var WeDo2 = /*#__PURE__*/function () {
     key: "_onConnect",
     value: function _onConnect() {
       var _this4 = this;
-      console.log('[wedo2hub3] connected, init sequence v1.5.3');
+      console.log('[wedo2hub3] connected, init sequence v1.5.4');
       this._ledModeTime = 0;
       this._dbgCount = 0;
-      // Subscribe first, then configure the LED after a short pause.
-      this._ble.startNotifications(BLEService.DEVICE_SERVICE, BLECharacteristic.ATTACHED_IO, this._onMessage).catch(function (e) {
+      this._ledRgb = false;
+
+      // 1. Read the manufacturer name to choose the LED mode (RGB or color index).
+      // 2. Subscribe to port notifications.
+      // 3. Configure the LED after a short pause.
+      this._ble.read(BLEService.DEVICE_INFO_SERVICE, BLECharacteristic.MANUFACTURER_NAME, false).then(function (res) {
+        var name = new TextDecoder().decode(Base64Util.base64ToUint8Array(res.message));
+        _this4._ledRgb = /lego/i.test(name);
+        console.log("[wedo2hub3] manufacturer: \"".concat(name, "\", LED mode: ").concat(_this4._ledRgb ? 'RGB' : 'color index'));
+      }).catch(function (e) {
+        console.warn('[wedo2hub3] cannot read manufacturer, using color index LED mode', e);
+      }).then(function () {
+        return _this4._ble.startNotifications(BLEService.DEVICE_SERVICE, BLECharacteristic.ATTACHED_IO, _this4._onMessage);
+      }).catch(function (e) {
         console.warn('[wedo2hub3] subscribe to ATTACHED_IO failed', e);
       }).then(function () {
         return new Promise(function (resolve) {
